@@ -1,33 +1,56 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { AuthContext } from "../context";
 import { Navigate } from "../../router/CustomRouter";
 
+// initial user info
+let initialUserInfo = {};
+
+// setting the user info
+if (typeof window !== "undefined") {
+  // ✅ Only runs once per app load
+
+  const cookieValue = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(`${import.meta.env.VITE_COOKIE_NAME}`))
+    ?.split("=")[1];
+
+  // set cookie
+  if (cookieValue) {
+    const { fullName, userName, role, authToken, refreshToken } =
+      JSON.parse(cookieValue);
+
+    initialUserInfo = { fullName, userName, role, authToken, refreshToken };
+  }
+}
+
 export default function AuthProvider({ children }) {
   // const [auth, setAuth] = useState({});
-  const [currentUser, setCurrentUser] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [currentUser, setCurrentUser] = useState(initialUserInfo);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
-  useEffect(() => {
-    const cookieValue = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith(`${import.meta.env.VITE_COOKIE_NAME}`))
-      ?.split("=")[1];
-    if (cookieValue) {
-      const { fullName, userName, authToken, refreshToken } =
-        JSON.parse(cookieValue);
+  // useEffect(() => {
+  //   const cookieValue = document.cookie
+  //     .split("; ")
+  //     .find((row) => row.startsWith(`${import.meta.env.VITE_COOKIE_NAME}`))
+  //     ?.split("=")[1];
 
-      setCurrentUser({ fullName, userName, authToken, refreshToken });
-    }
+  //   // set cookie
+  //   if (cookieValue) {
+  //     const { fullName, userName, authToken, refreshToken } =
+  //       JSON.parse(cookieValue);
 
-    setLoading(false);
-  }, []);
+  //     setCurrentUser({ fullName, userName, authToken, refreshToken });
+  //   }
+
+  //   setIsLoading(false);
+  // }, []);
 
   // register function
   async function register(input) {
     try {
-      setError("");
-      setLoading(true);
+      setIsError(false);
+      setIsLoading(true);
       const response = await fetch(
         `${import.meta.env.VITE_SERVER_BASE_URL}/user/register`,
         {
@@ -44,38 +67,6 @@ export default function AuthProvider({ children }) {
         tokens: { token: authToken, refreshToken },
       } = await response.json();
 
-      setLoading(false);
-
-      return setCurrentUser({ fullName, userName, authToken, refreshToken });
-    } catch (err) {
-      setError(err.message);
-    }
-  }
-
-  // login function
-  async function login(input) {
-    setError("");
-    try {
-      setError("");
-      setLoading(true);
-      const response = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}/user/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(input),
-        }
-      );
-
-      const {
-        user: { fullName, userName },
-        tokens: { token: authToken, refreshToken },
-      } = await response.json();
-
-      setCurrentUser({ fullName, userName, authToken, refreshToken });
-
       // cookies
       const cookies = JSON.stringify({
         fullName,
@@ -91,12 +82,66 @@ export default function AuthProvider({ children }) {
 
       document.cookie = `${
         import.meta.env.VITE_COOKIE_NAME
-      }=${cookies}; expires=${expiryDate}`;
+      }=${cookies}; expires=${expiryDate}; path=/`;
 
-      setLoading(false);
+      // set current user
+      setCurrentUser({ fullName, userName, authToken, refreshToken });
+
+      return true;
     } catch (err) {
-      setLoading(false);
-      setError(err.message);
+      setIsError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  // login function
+  async function login(input) {
+    try {
+      setIsError(false);
+      setIsLoading(true);
+      const response = await fetch(
+        `${import.meta.env.VITE_SERVER_BASE_URL}/user/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(input),
+        }
+      );
+
+      const {
+        user: { fullName, userName, role },
+        tokens: { token: authToken, refreshToken },
+      } = await response.json();
+
+      // cookies
+      const cookies = JSON.stringify({
+        fullName,
+        userName,
+        role,
+        authToken,
+        refreshToken,
+      });
+
+      // cookie expiry time
+      const expiryDate = new Date(
+        new Date().getTime() + Number(import.meta.env.VITE_EXPIRE_TIME)
+      ).toUTCString();
+
+      document.cookie = `${
+        import.meta.env.VITE_COOKIE_NAME
+      }=${cookies}; expires=${expiryDate}; path=/`;
+
+      // set current user
+      setCurrentUser({ fullName, userName, role, authToken, refreshToken });
+
+      return true;
+    } catch (err) {
+      setIsError(true);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -104,7 +149,9 @@ export default function AuthProvider({ children }) {
   async function logout() {
     document.cookie = `${
       import.meta.env.VITE_COOKIE_NAME
-    }=""; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+    }=""; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+
+    setCurrentUser({});
 
     Navigate("/");
   }
@@ -113,14 +160,15 @@ export default function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         currentUser,
-        loading,
-        error,
+        isLoading,
+        isError,
         register,
         login,
         logout,
       }}
     >
-      {!loading && children}
+      {/* {!isLoading && children} */}
+      {children}
     </AuthContext.Provider>
   );
 }

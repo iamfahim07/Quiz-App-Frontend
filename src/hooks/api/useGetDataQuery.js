@@ -1,5 +1,6 @@
 import { useReducer, useEffect } from "react";
 
+// reducer function
 const dataFetchReducer = (state, action) => {
   switch (action.type) {
     case "FETCH_INIT":
@@ -7,6 +8,7 @@ const dataFetchReducer = (state, action) => {
         ...state,
         isLoading: true,
         isError: false,
+        data: [],
         errorMessage: "",
       };
     case "FETCH_SUCCESS":

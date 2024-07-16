@@ -5,3 +5,14 @@
 * {
   @apply transition-colors duration-100;
 }
+
+@layer utilities {
+  @keyframes pulse {
+    50% {
+      opacity: 0.5;
+    }
+  }
+  .custom-animate-pulse {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}

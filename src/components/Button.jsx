@@ -2,6 +2,7 @@ export default function Button({
   isPrimary,
   isGhostButton,
   isLogin,
+  type = "button",
   handleButtonClick,
   isDisabled,
   children,
@@ -18,7 +19,8 @@ export default function Button({
           : isLogin
           ? "px-3 md:px-5 py-1 md:py-2"
           : "px-4 md:px-6 py-2 md:py-3"
-      } rounded ${isDisabled && "opacity-20 pointer-events-none"}`}
+      } rounded ${isDisabled && "opacity-50 cursor-not-allowed"}`}
+      type={type}
       onClick={handleButtonClick}
       disabled={isDisabled}
     >

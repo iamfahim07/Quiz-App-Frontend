@@ -1,23 +1,26 @@
-import Button from "../components/Button";
-import Lottie from "react-lottie";
-import Animation from "../assets/Animation.json";
-import { Link } from "../router/CustomRouter";
-import { useAuthContext } from "../context";
+// import Button from "../components/Button";
+// import Lottie from "react-lottie";
+// import HomeAnimation from "../assets/HomeAnimation.json";
+// import { Link } from "../router/CustomRouter";
+// import { useAuthContext } from "../context";
+import QuizZenDescription from "../components/home/QuizZenDescription";
+import QuizZenAnimation from "../components/home/QuizZenAnimation";
 
 export default function Home() {
-  const { currentUser } = useAuthContext();
+  // const { currentUser } = useAuthContext();
 
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: Animation,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
-    },
-  };
+  // const defaultOptions = {
+  //   loop: true,
+  //   autoplay: true,
+  //   animationData: HomeAnimation,
+  //   rendererSettings: {
+  //     preserveAspectRatio: "xMidYMid slice",
+  //   },
+  // };
+
   return (
     <main className="flex flex-col-reverse md:flex-row justify-between items-center gap-0 md:gap-5 mb-16 md:mb-0">
-      <div className="flex flex-col justify-center items-start gap-3 w-full md:w-[45%]">
+      {/* <div className="flex flex-col justify-center items-start gap-3 w-full md:w-[45%]">
         <h1 className="text-4xl sm:text-5xl md:text-6xl text-gray-800 dark:text-[#F6F7F9] font-bold font-['Roboto']">
           QuizZen
         </h1>
@@ -32,9 +35,10 @@ export default function Home() {
         >
           <Button isPrimary={true}>Get Started</Button>
         </Link>
-      </div>
+      </div> */}
+      <QuizZenDescription />
 
-      <div className="flex justify-start items-center w-full md:w-[55%] -mt-12 md:-mt-0 pointer-events-none">
+      {/* <div className="flex justify-start items-center w-full md:w-[55%] -mt-12 md:-mt-0 pointer-events-none">
         <div className="w-full md:w-[630px] h-full md:h-[630px]">
           <Lottie
             options={defaultOptions}
@@ -44,7 +48,8 @@ export default function Home() {
             isPaused={false}
           />
         </div>
-      </div>
+      </div> */}
+      <QuizZenAnimation />
     </main>
   );
 }

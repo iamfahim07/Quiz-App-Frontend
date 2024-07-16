@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
 import ParamsProvider from "./custom-router-context/provider/ParamsProvider";
+import {
+  isRouteCacheExist,
+  createRouteCache,
+} from "./cached-custom-route/cachedCustomRoute";
 
 // router function
 export function Route({ path, component }) {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  // creating a cache for the specified path
+  createRouteCache(path, path);
 
   const componentParams = path.split(":")[0];
 
@@ -24,6 +31,11 @@ export function Route({ path, component }) {
     };
   }, []);
 
+  // handling not found route
+  if (path === "/*" && !isRouteCacheExist(window.location.pathname)) {
+    return component;
+  }
+
   return isDynamicRoute ? (
     <ParamsProvider paths={{ path, currentPath }}>{component}</ParamsProvider>
   ) : currentPath === path ? (
@@ -33,6 +45,9 @@ export function Route({ path, component }) {
 
 // link function
 export function Link({ to, children }) {
+  // creating a cache for the specified path
+  createRouteCache(to, to);
+
   const preventReload = (e) => {
     e.preventDefault();
     window.history.pushState({}, "", to);
@@ -62,6 +77,9 @@ export function Link({ to, children }) {
 // }
 
 export function Navigate(to, { replace } = { replace: false }) {
+  // creating a cache for the specified path
+  createRouteCache(to, to);
+
   if (replace) {
     window.history.replaceState({}, "", to);
   } else {
@@ -72,6 +90,10 @@ export function Navigate(to, { replace } = { replace: false }) {
   window.dispatchEvent(navigationEvent);
 }
 
+// redirect function
 export function Redirect(to) {
+  // creating a cache for the specified path
+  createRouteCache(to, to);
+
   window.location.replace(to);
 }

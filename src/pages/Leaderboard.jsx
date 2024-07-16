@@ -1,18 +1,31 @@
-import Button from "../components/Button";
-import useGetDataQuery from "../hooks/useGetDataQuery";
-import { useParamsContext } from "../router/custom-router-context";
+// import Button from "../components/Button";
+import { Suspense } from "react";
+import LeaderboardInformation from "../components/leaderboard/LeaderboardInformation";
+import LeaderboardTopScorer from "../components/leaderboard/LeaderboardTopScorer";
+// import useGetDataQuery from "../hooks/api/useGetDataQuery";
+// import { Link } from "../router/CustomRouter";
+// import { useParamsContext } from "../router/custom-router-context";
 
 export default function Leaderboard() {
-  const { leaderboard_name } = useParamsContext();
-  const { data: leaderboardData, errorMessage } = useGetDataQuery(
-    `leaderboards/${leaderboard_name}`
-  );
+  // const { leaderboard_name } = useParamsContext();
+  // const { data: leaderboardData, errorMessage } = useGetDataQuery(
+  //   `leaderboards/${leaderboard_name}`
+  // );
 
-  const sortByTopScore = (a, b) => b - a;
+  // sorting top performer
+  // const sortByTopScore = (a, b) => {
+  //   if (a.obtainedScore !== b.obtainedScore) {
+  //     return b.obtainedScore - a.obtainedScore;
+  //   } else if (a.timeRequired !== b.timeRequired) {
+  //     return a.timeRequired - b.timeRequired;
+  //   } else {
+  //     return a.createdAt - b.createdAt;
+  //   }
+  // };
 
   return (
     <main className="flex flex-col lg:flex-row justify-between gap-8 bg-gray-100 dark:bg-gray-700 my-4">
-      <div className="flex flex-col gap-6 w-full lg:w-2/5 bg-gray-200 dark:bg-gray-900 py-4 sm:py-8 px-5 sm:px-10">
+      {/* <div className="flex flex-col gap-6 w-full lg:w-2/5 bg-gray-200 dark:bg-gray-900 py-4 sm:py-8 px-5 sm:px-10">
         <div className="flex flex-col gap-1 sm:gap-2">
           <h1 className="text-xl sm:text-2xl md:text-3xl text-gray-800 dark:text-[#F6F7F9] font-bold font-['Roboto']">
             Football Quiz Leaderboard
@@ -27,11 +40,14 @@ export default function Leaderboard() {
         </div>
 
         <div className="w-fit relative left-full -translate-x-full">
-          <Button>Home</Button>
+          <Link to={"/"}>
+            <Button>Home</Button>
+          </Link>
         </div>
-      </div>
+      </div> */}
+      <LeaderboardInformation />
 
-      <div className="w-full lg:w-3/5 flex justify-center items-center py-4 sm:py-8 px-5 sm:px-10">
+      {/* <div className="w-full lg:w-3/5 flex justify-center items-center py-4 sm:py-8 px-5 sm:px-10">
         <table className="w-full border-separate">
           <thead>
             <tr className="text-base sm:text-lg md:text-xl lg:text-2xl text-left font-['Roboto']">
@@ -52,8 +68,8 @@ export default function Leaderboard() {
 
           <tbody>
             {errorMessage.length === 0 &&
-              leaderboardData[0]?.topScorer?.length > 0 &&
-              leaderboardData[0]?.topScorer
+              leaderboardData?.topScorer?.length > 0 &&
+              leaderboardData?.topScorer
                 ?.sort(sortByTopScore)
                 .map((data, index) => {
                   return (
@@ -68,17 +84,21 @@ export default function Leaderboard() {
                         {data.fullName}
                       </td>
                       <td className="text-gray-600 dark:text-[#F2F3F5] py-1 px-2">
-                        {data.score}
+                        {data.obtainedScore}
                       </td>
                       <td className="text-gray-600 dark:text-[#F2F3F5] py-1 px-2">
-                        {data.timeRequired}
+                        {data.timeRequired}s
                       </td>
                     </tr>
                   );
                 })}
           </tbody>
         </table>
-      </div>
+      </div> */}
+
+      <Suspense fallback={<h1>Loading...</h1>}>
+        <LeaderboardTopScorer />
+      </Suspense>
     </main>
   );
 }
