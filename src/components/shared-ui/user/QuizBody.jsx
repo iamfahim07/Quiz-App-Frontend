@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Cross_Sign, OK_Sign } from "../SVG-Icons";
+import { Cross_Sign, OK_Sign } from "../../SVG-Icons";
 
 export default function QuizBody({
   quiz: { isMultiple, question, options = [] } = {},

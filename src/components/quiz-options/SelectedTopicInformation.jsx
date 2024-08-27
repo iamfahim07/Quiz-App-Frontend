@@ -18,7 +18,15 @@ export default function SelectedTopicInformation({ selectedTopic }) {
 
         <div className="flex gap-2 items-center">
           <Link to="/gameplay">
-            <Button handleButtonClick={() => setQuizTopic(selectedTopic.title)}>
+            <Button
+              handleButtonClick={() =>
+                setQuizTopic({
+                  id: selectedTopic._id,
+                  title: selectedTopic.title,
+                  description: selectedTopic.description,
+                })
+              }
+            >
               Start quiz
             </Button>
           </Link>
@@ -27,7 +35,7 @@ export default function SelectedTopicInformation({ selectedTopic }) {
             or
           </span>
 
-          <Link to={`/leaderboard/${selectedTopic.title}`}>
+          <Link to={`/leaderboard/${selectedTopic.title}/${selectedTopic._id}`}>
             <Button isGhostButton={true}>Leaderboard</Button>
           </Link>
         </div>

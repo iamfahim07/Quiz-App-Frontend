@@ -84,11 +84,32 @@ export const updateCache = (key, value) => {
       updatedValue = [...value];
     } else {
       // filtering out already exist value
-      const filterExistingValue = promise.value.filter(
-        (val) => val._id !== value._id
+      // const filterExistingValue = promise.value.filter(
+      //   (val) => val._id !== value._id
+      // );
+
+      const isUpdatedValue = promise.value.some(
+        (existingValue) => existingValue._id === value._id
       );
 
-      updatedValue = [...filterExistingValue, value];
+      if (isUpdatedValue) {
+        // updating with the new updated value
+        const newValue = promise.value.map((existingValue) => {
+          if (existingValue._id === value._id) {
+            return value;
+          } else {
+            return existingValue;
+          }
+        });
+
+        // updatedValue = [...filterExistingValue, value];
+        updatedValue = newValue;
+      } else {
+        // adding new value
+        const existingValue = promise.value;
+
+        updatedValue = [...existingValue, value];
+      }
     }
 
     const updatedPromise = async (updatedValue) => updatedValue;

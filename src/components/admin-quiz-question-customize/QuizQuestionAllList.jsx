@@ -3,7 +3,8 @@ import useGetDataQuery1 from "../../hooks/api/useGetDataQuery1";
 import use from "../../hooks/use";
 import { useParamsContext } from "../../router/custom-router-context";
 import QuizQuestionAddAndUpdateForm from "./QuizQuestionAddAndUpdateForm";
-import SingleQuizQuestion from "./SingleQuizQuestion";
+// import SingleQuizQuestion from "./SingleQuizQuestion";
+import SingleQuizTopicOrQuestion from "../shared-ui/SingleQuizTopicOrQuestion";
 
 export default function QuizQuestionAllList({
   allStates: {
@@ -16,11 +17,11 @@ export default function QuizQuestionAllList({
   },
 }) {
   // current quiz topic
-  const { topic_name } = useParamsContext();
+  const { topic_name, topic_id } = useParamsContext();
 
   // all the quiz question
   const [quizzes, setQuizzes] = useState(
-    use(useGetDataQuery1(`quizzes/${topic_name}`)) || []
+    use(useGetDataQuery1(`quizzes/${topic_id}`)) || []
   );
 
   // quiz question update function
@@ -73,11 +74,19 @@ export default function QuizQuestionAllList({
           ) : (
             quizzes?.map((quiz) => {
               return (
-                <SingleQuizQuestion
+                // <SingleQuizQuestion
+                //   key={quiz._id}
+                //   quiz={quiz}
+                //   setQuizzes={setQuizzes}
+                //   onUpdateClick={handleUpdateClick}
+                // />
+
+                <SingleQuizTopicOrQuestion
                   key={quiz._id}
-                  quiz={quiz}
-                  setQuizzes={setQuizzes}
+                  propsData={quiz}
+                  setPropsData={setQuizzes}
                   onUpdateClick={handleUpdateClick}
+                  context="question"
                 />
               );
             })

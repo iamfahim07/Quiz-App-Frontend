@@ -2,6 +2,7 @@
 import { Suspense } from "react";
 import LeaderboardInformation from "../components/leaderboard/LeaderboardInformation";
 import LeaderboardTopScorer from "../components/leaderboard/LeaderboardTopScorer";
+import BaseLayoutBox from "../components/shared-ui/user/BaseLayoutBox";
 // import useGetDataQuery from "../hooks/api/useGetDataQuery";
 // import { Link } from "../router/CustomRouter";
 // import { useParamsContext } from "../router/custom-router-context";
@@ -16,15 +17,16 @@ export default function Leaderboard() {
   // const sortByTopScore = (a, b) => {
   //   if (a.obtainedScore !== b.obtainedScore) {
   //     return b.obtainedScore - a.obtainedScore;
-  //   } else if (a.timeRequired !== b.timeRequired) {
-  //     return a.timeRequired - b.timeRequired;
+  //   } else if (a.timeSpent !== b.timeSpent) {
+  //     return a.timeSpent - b.timeSpent;
   //   } else {
-  //     return a.createdAt - b.createdAt;
+  //     return a.creationTime - b.creationTime;
   //   }
   // };
 
   return (
-    <main className="flex flex-col lg:flex-row justify-between gap-8 bg-gray-100 dark:bg-gray-700 my-4">
+    <BaseLayoutBox>
+      {/* <main className="flex flex-col lg:flex-row justify-between gap-8 bg-gray-100 dark:bg-gray-700 my-4"> */}
       {/* <div className="flex flex-col gap-6 w-full lg:w-2/5 bg-gray-200 dark:bg-gray-900 py-4 sm:py-8 px-5 sm:px-10">
         <div className="flex flex-col gap-1 sm:gap-2">
           <h1 className="text-xl sm:text-2xl md:text-3xl text-gray-800 dark:text-[#F6F7F9] font-bold font-['Roboto']">
@@ -87,7 +89,7 @@ export default function Leaderboard() {
                         {data.obtainedScore}
                       </td>
                       <td className="text-gray-600 dark:text-[#F2F3F5] py-1 px-2">
-                        {data.timeRequired}s
+                        {data.timeSpent}s
                       </td>
                     </tr>
                   );
@@ -99,6 +101,7 @@ export default function Leaderboard() {
       <Suspense fallback={<h1>Loading...</h1>}>
         <LeaderboardTopScorer />
       </Suspense>
-    </main>
+      {/* </main> */}
+    </BaseLayoutBox>
   );
 }

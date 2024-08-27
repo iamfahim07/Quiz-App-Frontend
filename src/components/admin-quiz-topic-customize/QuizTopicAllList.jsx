@@ -1,8 +1,9 @@
-import useGetDataQuery1 from "../../hooks/api/useGetDataQuery1";
-import QuizTopicAddAndUpdateForm from "./QuizTopicAddAndUpdateForm";
-import SingleQuizTopic from "./SingleQuizTopic";
-import use from "../../hooks/use";
 import { useState } from "react";
+import useGetDataQuery1 from "../../hooks/api/useGetDataQuery1";
+import use from "../../hooks/use";
+import QuizTopicAddAndUpdateForm from "./QuizTopicAddAndUpdateForm";
+// import SingleQuizTopic from "./SingleQuizTopic";
+import SingleQuizTopicOrQuestion from "../shared-ui/SingleQuizTopicOrQuestion";
 
 export default function QuizTopicAllList({
   allStates: {
@@ -55,11 +56,19 @@ export default function QuizTopicAllList({
           ) : (
             topics?.map((topic) => {
               return (
-                <SingleQuizTopic
+                // <SingleQuizTopic
+                //   key={topic._id}
+                //   topic={topic}
+                //   setTopics={setTopics}
+                //   onUpdateClick={handleUpdateClick}
+                // />
+
+                <SingleQuizTopicOrQuestion
                   key={topic._id}
-                  topic={topic}
-                  setTopics={setTopics}
+                  propsData={topic}
+                  setPropsData={setTopics}
                   onUpdateClick={handleUpdateClick}
+                  context="topic"
                 />
               );
             })

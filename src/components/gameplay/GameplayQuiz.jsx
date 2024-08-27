@@ -1,15 +1,20 @@
+import { useAnalysisContext, useQuizTopicContext } from "../../context";
 import Button from "../Button";
-import { useQuizTopicContext, useAnalysisContext } from "../../context";
 // import useGetDataQuery from "../../hooks/api/useGetDataQuery";
-import QuizBody from "../shared-ui/QuizBody";
-import { useEffect, useState } from "react";
-import { Link } from "../../router/CustomRouter";
-import QuizCountNotification from "../shared-ui/QuizCountNotification";
+import { useEffect, useRef, useState } from "react";
+import { useAuthContext } from "../../context";
 import useGetDataQuery1 from "../../hooks/api/useGetDataQuery1";
+import useSetDataMutation from "../../hooks/api/useSetDataMutation";
 import use from "../../hooks/use";
+import { Navigate } from "../../router/CustomRouter";
+import QuizBody from "../shared-ui/user/QuizBody";
+import QuizCountNotification from "../shared-ui/user/QuizCountNotification";
 
 export default function GameplayQuiz() {
   const { quizTopic } = useQuizTopicContext();
+
+  // current user info
+  const { currentUser } = useAuthContext();
 
   //getting all the quizzes
   //   const {
@@ -19,7 +24,11 @@ export default function GameplayQuiz() {
   //     errorMessage: quiz_error_msg,
   //   } = useGetDataQuery(`quizzes/${quizTopic.toLowerCase()}`);
 
-  const quizzes = use(useGetDataQuery1(`quizzes/${quizTopic.toLowerCase()}`));
+  const quizzes = use(useGetDataQuery1(`quizzes/${quizTopic?.id}`));
+  // trying new leaderboard logic
+  // const leaderboard = use(useGetDataQuery1(`leaderboards/${quizTopic?.id}`));
+
+  const [setData] = useSetDataMutation(`leaderboards/${quizTopic?.id}`);
 
   // getting the leaderboard info
   // const {
@@ -31,10 +40,11 @@ export default function GameplayQuiz() {
   // analysis context
   const {
     setUserAchievedScore,
-    setUserTimeTaken,
+    // setUserTimeTaken,
     setQuizData,
     setUserSelectedData,
     // setLeaderboardInfo,
+    setRankingText,
   } = useAnalysisContext();
   // time bar state
   const [remainingTime, setRemainingTime] = useState({
@@ -98,11 +108,19 @@ export default function GameplayQuiz() {
     return () => clearTimeout(timeoutId);
   }, [remainingTime, quizzes]);
 
+  // storing the user score and taken time
+  const scoreAndTime = useRef({
+    userAchievedScore: 0,
+    userTimeTaken: 0,
+  });
+
   // next button click event
-  const onNextButtonClick = () => {
+  const onNextButtonClick = async () => {
     if (currentQuizIndex === 0) {
-      setUserAchievedScore(0);
-      setUserTimeTaken(0);
+      // setUserAchievedScore(0);
+      // setUserTimeTaken(0);
+      scoreAndTime.current.userAchievedScore = 0;
+      scoreAndTime.current.userTimeTaken = 0;
     }
 
     setRemainingTime({ second: 0, timeBarWidth: 0, isTimeBarActive: false });
@@ -114,12 +132,22 @@ export default function GameplayQuiz() {
       { id: qnID, userAnswers: [...selectedAnswers] },
     ]);
 
-    setUserTimeTaken((prev) => prev + remainingTime.second);
+    // setUserTimeTaken((prev) => prev + remainingTime.second);
+    scoreAndTime.current.userTimeTaken += remainingTime.second;
 
     checkAnswers();
 
     if (currentQuizIndex < quizzes.length - 1) {
       setCurrentQuizIndex((prev) => prev + 1);
+    }
+
+    if (currentQuizIndex === quizzes?.length - 1) {
+      await analyseLeaderboardInfo();
+      setUserAchievedScore(scoreAndTime.current.userAchievedScore);
+
+      Navigate(`/answer_analysis/${quizTopic?.title}/${quizTopic?.id}`, {
+        replace: true,
+      });
     }
   };
 
@@ -151,9 +179,51 @@ export default function GameplayQuiz() {
     );
 
     if (isUserCorrect) {
-      setUserAchievedScore((prev) => prev + 5);
+      scoreAndTime.current.userAchievedScore += 5;
+      // setUserAchievedScore((prev) => prev + 5);
     }
   };
+
+  // Checking if the current user's score for this round of the quiz is in the top seven
+  async function analyseLeaderboardInfo() {
+    let timestamps = Date.now();
+
+    // creating result object with user info and score.
+    const playerQuizResult = {
+      fullName: currentUser?.fullName,
+      userName: currentUser?.userName,
+      obtainedScore: scoreAndTime.current.userAchievedScore,
+      timeSpent: scoreAndTime.current.userTimeTaken,
+      creationTime: timestamps,
+    };
+
+    // const newTopSevenScorer = await dependenciesRef.current.setData(playerQuizResult);
+    const newLeaderboardData = await setData(playerQuizResult);
+
+    const currentPlayerPosition = newLeaderboardData.topScorer.findIndex(
+      (updatedResult) =>
+        updatedResult.userName === playerQuizResult.userName &&
+        updatedResult.creationTime === playerQuizResult.creationTime
+    );
+
+    if (currentPlayerPosition >= 0) {
+      // const position = newLeaderboardData.topScorer.findIndex(
+      //   (user) => user.creationTime === timestamps
+      // );
+      const generateSuffix =
+        currentPlayerPosition + 1 === 1
+          ? "st"
+          : currentPlayerPosition + 1 === 2
+          ? "nd"
+          : currentPlayerPosition + 1 === 3
+          ? "rd"
+          : "th";
+
+      setRankingText(`${currentPlayerPosition + 1}${generateSuffix}`);
+    } else {
+      setRankingText("beyond 7th place");
+    }
+  }
 
   return (
     <>
@@ -219,19 +289,19 @@ export default function GameplayQuiz() {
                 currentQuizIndex={currentQuizIndex}
               />
 
-              <Link
+              {/* <Link
                 to={
                   currentQuizIndex === quizzes?.length - 1
-                    ? `/answer_analysis/${quizTopic}`
+                    ? `/answer_analysis/${quizTopic?.title}`
                     : ""
                 }
-              >
-                <Button handleButtonClick={onNextButtonClick}>
-                  {currentQuizIndex === quizzes?.length - 1
-                    ? "Finish"
-                    : "Next Question"}
-                </Button>
-              </Link>
+              > */}
+              <Button handleButtonClick={onNextButtonClick}>
+                {currentQuizIndex === quizzes?.length - 1
+                  ? "Finish"
+                  : "Next Question"}
+              </Button>
+              {/* </Link> */}
             </div>
           </div>
         </div>

@@ -20,7 +20,7 @@ export default function SingleQuizQuestion({
   return (
     <div className="flex flex-col gap-2 md:gap-3 text-base sm:text-lg md:text-2xl font-['Inter'] font-medium">
       {/* single topic */}
-      <div className="w-11/12 flex justify-between items-center gap-2 px-3 py-2 bg-gray-200 dark:bg-gray-900 lg:hover:scale-[1.02] lg:hover:shadow-md cursor-pointer rounded transition-all">
+      <div className="w-full lg:w-11/12 flex justify-between items-center gap-2 px-3 py-2 bg-gray-200 dark:bg-gray-900 lg:hover:scale-[1.02] lg:hover:shadow-md cursor-pointer rounded transition-all">
         {/* text */}
         <div className="flex flex-col gap-2">
           <p className="text-gray-800 dark:text-[#F6F7F9] transition-all">

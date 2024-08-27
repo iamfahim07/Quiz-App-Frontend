@@ -1,8 +1,8 @@
 // import { useState } from "react";
-import Button from "../Button";
-import Input from "../form-element/Input";
 import useSetDataMutation from "../../hooks/api/useSetDataMutation";
 import { useParamsContext } from "../../router/custom-router-context";
+import Button from "../Button";
+import Input from "../form-element/Input";
 import { Spin_Animation } from "../SVG-Icons";
 
 export default function QuizQuestionAddAndUpdateForm({
@@ -31,10 +31,10 @@ export default function QuizQuestionAddAndUpdateForm({
   // });
 
   // current quiz topic
-  const { topic_name } = useParamsContext();
+  const { topic_id } = useParamsContext();
 
   // sending a post request to update or add the quiz question
-  const [setData, { isLoading }] = useSetDataMutation(`quizzes/${topic_name}`);
+  const [setData, { isLoading }] = useSetDataMutation(`quizzes/${topic_id}`);
 
   // check isMultiple
   const checkIsMultiple = () => {

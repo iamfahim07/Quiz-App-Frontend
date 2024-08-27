@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import ParamsProvider from "./custom-router-context/provider/ParamsProvider";
 import {
-  isRouteCacheExist,
   createRouteCache,
+  isRouteCacheExist,
 } from "./cached-custom-route/cachedCustomRoute";
+import ParamsProvider from "./custom-router-context/provider/ParamsProvider";
 
 // router function
 export function Route({ path, component }) {

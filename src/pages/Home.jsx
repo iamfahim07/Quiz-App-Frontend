@@ -3,8 +3,8 @@
 // import HomeAnimation from "../assets/HomeAnimation.json";
 // import { Link } from "../router/CustomRouter";
 // import { useAuthContext } from "../context";
-import QuizZenDescription from "../components/home/QuizZenDescription";
 import QuizZenAnimation from "../components/home/QuizZenAnimation";
+import QuizZenDescription from "../components/home/QuizZenDescription";
 
 export default function Home() {
   // const { currentUser } = useAuthContext();

@@ -7,6 +7,7 @@ export default function AnalysisProvider({ children }) {
   const [quizData, setQuizData] = useState([]);
   const [userSelectedData, setUserSelectedData] = useState([]);
   const [leaderboardInfo, setLeaderboardInfo] = useState({});
+  const [rankingText, setRankingText] = useState("");
 
   return (
     <AnalysisContext.Provider
@@ -21,6 +22,8 @@ export default function AnalysisProvider({ children }) {
         setUserSelectedData,
         leaderboardInfo,
         setLeaderboardInfo,
+        rankingText,
+        setRankingText,
       }}
     >
       {children}

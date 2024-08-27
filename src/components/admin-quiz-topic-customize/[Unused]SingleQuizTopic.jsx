@@ -9,12 +9,6 @@ export default function SingleQuizTopic({ topic, setTopics, onUpdateClick }) {
 
   const [setData, { isLoading }] = useSetDataMutation("topics");
 
-  // const handleUpdateClick = (e) => {
-  //   e.stopPropagation();
-
-  //   setIsAddTopic(true);
-  // };
-
   const handleDeleteClick = async () => {
     const updatedTopics = await setData(topic._id, { method: "DELETE" });
     setTopics(updatedTopics);
@@ -27,7 +21,7 @@ export default function SingleQuizTopic({ topic, setTopics, onUpdateClick }) {
       } w-full md:gap-3 text-base sm:text-lg md:text-2xl font-['Inter'] font-medium`}
     >
       {/* single topic */}
-      <div className="w-11/12 flex justify-between items-center bg-gray-200 dark:bg-gray-900 lg:hover:scale-[1.02] lg:hover:shadow-md cursor-pointer rounded transition-all">
+      <div className="w-full lg:w-11/12 flex justify-between items-center bg-gray-200 dark:bg-gray-900 lg:hover:scale-[1.02] lg:hover:shadow-md cursor-pointer rounded transition-all">
         {/* text */}
 
         <div className="w-full px-3 py-2" onClick={handleNavigate}>

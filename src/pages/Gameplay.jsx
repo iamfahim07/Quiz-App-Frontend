@@ -1,13 +1,14 @@
 // import Button from "../components/Button";
 // import { useQuizTopicContext, useAnalysisContext } from "../context";
 // import useGetDataQuery from "../hooks/api/useGetDataQuery";
-// import QuizBody from "../components/shared-ui/QuizBody";
+// import QuizBody from "../components/shared-ui/user/QuizBody";
 // import { useEffect, useState } from "react";
 // import { Link } from "../router/CustomRouter";
-// import QuizCountNotification from "../components/shared-ui/QuizCountNotification";
+// import QuizCountNotification from "../components/shared-ui/user/QuizCountNotification";
 import { Suspense } from "react";
 import GameplayInformation from "../components/gameplay/GameplayInformation";
 import GameplayQuiz from "../components/gameplay/GameplayQuiz";
+import BaseLayoutBox from "../components/shared-ui/user/BaseLayoutBox";
 
 export default function Gameplay() {
   // const { quizTopic } = useQuizTopicContext();
@@ -152,7 +153,8 @@ export default function Gameplay() {
   // };
 
   return (
-    <main className="flex flex-col lg:flex-row justify-between gap-8 bg-gray-100 dark:bg-gray-700 my-4">
+    <BaseLayoutBox>
+      {/* <main className="flex flex-col lg:flex-row justify-between gap-8 bg-gray-100 dark:bg-gray-700 my-4"> */}
       <GameplayInformation />
 
       {/* <div className="w-full lg:w-3/5 flex justify-center items-center py-4 sm:py-8 px-5 sm:px-10">
@@ -237,6 +239,7 @@ export default function Gameplay() {
       <Suspense fallback={<h1>Loading...</h1>}>
         <GameplayQuiz />
       </Suspense>
-    </main>
+      {/* </main> */}
+    </BaseLayoutBox>
   );
 }

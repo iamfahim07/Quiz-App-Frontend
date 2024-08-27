@@ -1,39 +1,36 @@
+import { Suspense, lazy, useState } from "react";
 import "./App.css";
-import { useState, Suspense, lazy } from "react";
-import Header from "./components/Header";
+import AdminRoute from "./components/AdminRoute";
 import Footer from "./components/Footer";
-// import Home from "./pages/Home";
-const Home = lazy(() => import("./pages/Home"));
-// import QuizOptions from "./pages/QuizOptions";
-const QuizOptions = lazy(() => import("./pages/QuizOptions"));
-// import Guidelines from "./pages/Guidelines";
-const Guidelines = lazy(() => import("./pages/Guidelines"));
-// import IntroduceYourself from "./pages/IntroduceYourself";
-const IntroduceYourself = lazy(() => import("./pages/IntroduceYourself"));
-// import Gameplay from "./pages/Gameplay";
-const Gameplay = lazy(() => import("./pages/Gameplay"));
-// import AnswerAnalysis from "./pages/AnswerAnalysis";
-const AnswerAnalysis = lazy(() => import("./pages/AnswerAnalysis"));
-// import Leaderboard from "./pages/Leaderboard";
-const Leaderboard = lazy(() => import("./pages/Leaderboard"));
-import { Route } from "./router/CustomRouter";
-import QuizTopicProvider from "./context/provider/QuizTopicProvider";
+import Header from "./components/Header";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
-import AuthProvider from "./context/provider/AuthProvider";
 import AnalysisProvider from "./context/provider/AnalysisProvider";
-import chooseTheme from "./utilities/chooseTheme";
+import AuthProvider from "./context/provider/AuthProvider";
+import QuizTopicProvider from "./context/provider/QuizTopicProvider";
+import { Route } from "./router/CustomRouter";
 import {
-  HomeSkeleton,
   CommonSkeletonOne,
   CommonSkeletonTwo,
+  HomeSkeleton,
 } from "./skeleton/SkeletonLoaders";
+import chooseTheme from "./utilities/chooseTheme";
+const Home = lazy(() => import("./pages/Home"));
+const QuizOptions = lazy(() => import("./pages/QuizOptions"));
+const Guidelines = lazy(() => import("./pages/Guidelines"));
+const IntroduceYourself = lazy(() => import("./pages/IntroduceYourself"));
+const Gameplay = lazy(() => import("./pages/Gameplay"));
+const AnswerAnalysis = lazy(() => import("./pages/AnswerAnalysis"));
+const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 const AdminLogin = lazy(() => import("./admin-pages/AdminLogin"));
-const QuizTopicCustomize = lazy(() =>
-  import("./admin-pages/QuizTopicCustomize")
-);
-const QuizQuestionCustomize = lazy(() =>
-  import("./admin-pages/QuizQuestionCustomize")
+// const QuizTopicCustomize = lazy(() =>
+//   import("./admin-pages/QuizTopicCustomize")
+// );
+// const QuizQuestionCustomize = lazy(() =>
+//   import("./admin-pages/QuizQuestionCustomize")
+// );
+const QuizTopicOrQuestionCustomize = lazy(() =>
+  import("./admin-pages/QuizTopicOrQuestionCustomize")
 );
 const NotFound = lazy(() => import("./components/NotFound"));
 
@@ -51,74 +48,76 @@ function App() {
           <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-52 py-3 md:py-5">
             <Header allProps={{ currentTheme, setCurrentTheme, chooseTheme }} />
 
-            <QuizTopicProvider>
-              <Route
-                path="/"
-                component={
-                  <Suspense fallback={<HomeSkeleton />}>
-                    <Home />
-                  </Suspense>
-                }
-              />
-
-              <Route
-                path="/introduce_yourself"
-                component={
-                  <PublicRoute>
-                    <Suspense fallback={<CommonSkeletonOne />}>
-                      <IntroduceYourself />
+            <AdminRoute>
+              <QuizTopicProvider>
+                <Route
+                  path="/"
+                  component={
+                    <Suspense fallback={<HomeSkeleton />}>
+                      <Home />
                     </Suspense>
-                  </PublicRoute>
-                }
-              />
-              <Route
-                path="/guidelines"
-                component={
-                  <Suspense fallback={<CommonSkeletonOne />}>
-                    <Guidelines />
-                  </Suspense>
-                }
-              />
-              <Route
-                path="/quiz_options"
-                component={
-                  <Suspense fallback={<CommonSkeletonTwo />}>
-                    <QuizOptions />
-                  </Suspense>
-                }
-              />
+                  }
+                />
 
-              <AnalysisProvider>
                 <Route
-                  path="/gameplay"
+                  path="/introduce_yourself"
                   component={
-                    <ProtectedRoute>
-                      <Suspense fallback={<CommonSkeletonTwo />}>
-                        <Gameplay />
+                    <PublicRoute>
+                      <Suspense fallback={<CommonSkeletonOne />}>
+                        <IntroduceYourself />
                       </Suspense>
-                    </ProtectedRoute>
+                    </PublicRoute>
                   }
                 />
                 <Route
-                  path="/answer_analysis/:topic_analysis"
+                  path="/guidelines"
                   component={
-                    <ProtectedRoute>
-                      <Suspense fallback={<CommonSkeletonTwo />}>
-                        <AnswerAnalysis />
-                      </Suspense>
-                    </ProtectedRoute>
+                    <Suspense fallback={<CommonSkeletonOne />}>
+                      <Guidelines />
+                    </Suspense>
                   }
                 />
-              </AnalysisProvider>
-              <Route
-                path="/leaderboard/:leaderboard_name"
-                component={
-                  <Suspense fallback={<CommonSkeletonTwo />}>
-                    <Leaderboard />
-                  </Suspense>
-                }
-              />
-            </QuizTopicProvider>
+                <Route
+                  path="/quiz_options"
+                  component={
+                    <Suspense fallback={<CommonSkeletonTwo />}>
+                      <QuizOptions />
+                    </Suspense>
+                  }
+                />
+
+                <AnalysisProvider>
+                  <Route
+                    path="/gameplay"
+                    component={
+                      <ProtectedRoute>
+                        <Suspense fallback={<CommonSkeletonTwo />}>
+                          <Gameplay />
+                        </Suspense>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/answer_analysis/:topic_analysis/:topic_analysis_id"
+                    component={
+                      <ProtectedRoute>
+                        <Suspense fallback={<CommonSkeletonTwo />}>
+                          <AnswerAnalysis />
+                        </Suspense>
+                      </ProtectedRoute>
+                    }
+                  />
+                </AnalysisProvider>
+                <Route
+                  path="/leaderboard/:leaderboard_name/:leaderboard_id"
+                  component={
+                    <Suspense fallback={<CommonSkeletonTwo />}>
+                      <Leaderboard />
+                    </Suspense>
+                  }
+                />
+              </QuizTopicProvider>
+            </AdminRoute>
 
             {/* admin route start */}
 
@@ -134,18 +133,24 @@ function App() {
             <Route
               path="/admin/quiz_topic_customize"
               component={
-                <Suspense fallback={<CommonSkeletonTwo />}>
-                  <QuizTopicCustomize />
-                </Suspense>
+                <ProtectedRoute>
+                  <Suspense fallback={<CommonSkeletonTwo />}>
+                    {/* <QuizTopicCustomize /> */}
+                    <QuizTopicOrQuestionCustomize context="topic" />
+                  </Suspense>
+                </ProtectedRoute>
               }
             />
 
             <Route
-              path="/admin/quiz_question_customize/:topic_name"
+              path="/admin/quiz_question_customize/:topic_name/:topic_id"
               component={
-                <Suspense fallback={<CommonSkeletonTwo />}>
-                  <QuizQuestionCustomize />
-                </Suspense>
+                <ProtectedRoute>
+                  <Suspense fallback={<CommonSkeletonTwo />}>
+                    {/* <QuizQuestionCustomize /> */}
+                    <QuizTopicOrQuestionCustomize context="question" />
+                  </Suspense>
+                </ProtectedRoute>
               }
             />
 

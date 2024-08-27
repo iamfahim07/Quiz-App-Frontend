@@ -4,15 +4,23 @@ import { Suspense, useState } from "react";
 // import { Link } from "../router/CustomRouter";
 // import { useQuizTopicContext } from "../context";
 // import { Down_arrow, Info_Sign, Up_arrow } from "../components/SVG-Icons";
-import ChooseYourQuest from "../components/quiz-options/ChooseYourQuest";
-import ChooseQuiz from "../components/quiz-options/ChooseQuiz";
+import { useEffect } from "react";
 import ChooseOptionNotification from "../components/quiz-options/ChooseOptionNotification";
+import ChooseQuiz from "../components/quiz-options/ChooseQuiz";
+import ChooseYourQuest from "../components/quiz-options/ChooseYourQuest";
 import SelectedTopicInformation from "../components/quiz-options/SelectedTopicInformation";
+import { useQuizTopicContext } from "../context";
 
 export default function QuizOptions() {
   const [isFocus, setIsFocus] = useState(false);
   // const [input, setInput] = useState("");
   const [selectedTopic, setSelectedTopic] = useState(null);
+
+  const { setQuizTopic } = useQuizTopicContext();
+
+  useEffect(() => {
+    setQuizTopic({});
+  }, [setQuizTopic]);
 
   // const { isLoading, isError, data: topics } = useGetDataQuery("topics");
 

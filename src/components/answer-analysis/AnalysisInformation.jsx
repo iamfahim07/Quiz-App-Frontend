@@ -1,15 +1,13 @@
+import { useParamsContext } from "../../router/custom-router-context";
 import { Link } from "../../router/CustomRouter";
 import Button from "../Button";
 import { Cross_Sign, OK_Sign } from "../SVG-Icons";
 
 export default function AnalysisInformation({
-  allProps: {
-    userAchievedScore,
-    totalAchievableScore,
-    topic_analysis,
-    rankingText,
-  },
+  allProps: { userAchievedScore, totalAchievableScore, rankingText },
 }) {
+  const { topic_analysis, topic_analysis_id } = useParamsContext();
+
   return (
     <div className="flex flex-col gap-6 w-full lg:w-2/5 bg-gray-200 dark:bg-gray-900 py-4 sm:py-8 px-5 sm:px-10">
       <div className="flex flex-col gap-1 sm:gap-2">
@@ -66,7 +64,7 @@ export default function AnalysisInformation({
         <Link to="/">
           <Button isGhostButton={true}>Home</Button>
         </Link>
-        <Link to={`/leaderboard/${topic_analysis}`}>
+        <Link to={`/leaderboard/${topic_analysis}/${topic_analysis_id}`}>
           <Button>Leaderboard</Button>
         </Link>
       </div>

@@ -1,10 +1,10 @@
+import { useState } from "react";
 import Lottie from "react-lottie";
 import IntroduceYourselfAnimation from "../assets/Introduce Yourself.json";
 import Button from "../components/Button";
-import { Navigate } from "../router/CustomRouter";
-import { useState } from "react";
-import { useAuthContext } from "../context";
 import { Spin_Animation } from "../components/SVG-Icons";
+import { useAuthContext } from "../context";
+import { Navigate } from "../router/CustomRouter";
 // import Input from "../components/form-element/Input";
 import InputField from "../components/form-element/InputField";
 

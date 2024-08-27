@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { AuthContext } from "../context";
 import { Navigate } from "../../router/CustomRouter";
+import { AuthContext } from "../context";
 
 // initial user info
 let initialUserInfo = {};
