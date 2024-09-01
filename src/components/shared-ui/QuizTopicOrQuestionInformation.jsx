@@ -36,6 +36,22 @@ export default function QuizTopicOrQuestionInformation({
             ? "Here is a list of all the quiz topics. Topics can be updated, deleted, or new topics can be added. Click the Add Topic button to add a new topic, or click the update or delete icon to update or delete a topic."
             : `Here is a list of all the ${topic_name} Quiz Question. Question can be updated, deleted, or new Question can be added. Click the Add Question button to add a new Question, or click the update or delete icon to update or delete a Question.`}
         </p>
+
+        <p className="text-base sm:text-lg md:text-lg bg-sky-400 text-white py-1 px-2 rounded font-['Inter'] custom-animate-pulse">
+          {context === "topic"
+            ? "Title character limit: 20"
+            : "Question character limit: 100"}
+        </p>
+        <p className="text-base sm:text-lg md:text-lg bg-sky-400 text-white py-1 px-2 rounded font-['Inter'] custom-animate-pulse">
+          {context === "topic"
+            ? "Description character limit: 230"
+            : "Answer character limit: 40"}
+        </p>
+        {context === "topic" && (
+          <p className="text-base sm:text-lg md:text-lg bg-sky-400 text-white py-1 px-2 rounded font-['Inter'] custom-animate-pulse">
+            Image file size limit: 3MB
+          </p>
+        )}
       </div>
 
       {/* button element jsx */}
@@ -45,13 +61,12 @@ export default function QuizTopicOrQuestionInformation({
             <Button isGhostButton={true}>Topics</Button>
           </Link>
         )}
-        {/* <Link to=""> */}
+
         <Button handleButtonClick={toggleFormState}>
           {isActive
             ? "Cancel"
             : `${context === "topic" ? "Add Topic" : "Add Question"}`}
         </Button>
-        {/* </Link> */}
       </div>
     </div>
   );

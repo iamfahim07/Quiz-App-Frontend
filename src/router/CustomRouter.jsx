@@ -15,7 +15,9 @@ export function Route({ path, component }) {
   const componentParams = path.split(":")[0];
 
   const isDynamicRoute =
-    path.includes(":") && currentPath.includes(componentParams);
+    path.includes(":") &&
+    currentPath.includes(componentParams) &&
+    path.split("/").length === currentPath.split("/").length;
 
   useEffect(() => {
     const onLocationChange = () => {
@@ -32,7 +34,7 @@ export function Route({ path, component }) {
   }, []);
 
   // handling not found route
-  if (path === "/*" && !isRouteCacheExist(window.location.pathname)) {
+  if (path === "/*" && !isRouteCacheExist(path, currentPath)) {
     return component;
   }
 
@@ -61,20 +63,6 @@ export function Link({ to, children }) {
     </a>
   );
 }
-
-// navigate function
-// export function Navigate(to, { replace } = { replace: false }) {
-//   useEffect(() => {
-//     if (replace) {
-//       window.history.replaceState({}, "", to);
-//     } else {
-//       window.history.pushState({}, "", to);
-//     }
-
-//     const navigationEvent = new PopStateEvent("navigate");
-//     window.dispatchEvent(navigationEvent);
-//   }, [to, replace]);
-// }
 
 export function Navigate(to, { replace } = { replace: false }) {
   // creating a cache for the specified path

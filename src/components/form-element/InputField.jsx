@@ -1,4 +1,4 @@
-import { useState, forwardRef } from "react";
+import { forwardRef, useState } from "react";
 
 export default forwardRef(function InputField(
   { type, name, label, value, onHandleInput, required, isDisabled },
@@ -16,7 +16,7 @@ export default forwardRef(function InputField(
     <label
       className={`w-full h-16 flex flex-col bg-transparent dark:caret-white px-3 py-1 border-2 border-gray-300 dark:border-gray-600 ${
         isFocus && "border-teal-600 dark:border-teal-600"
-      } transition-colors duration-300 rounded outline-none cursor-pointer font-['Roboto']`}
+      } transition-colors duration-75 rounded outline-none cursor-pointer font-['Roboto']`}
       htmlFor={name}
       onClick={() => setisFocus(true)}
     >

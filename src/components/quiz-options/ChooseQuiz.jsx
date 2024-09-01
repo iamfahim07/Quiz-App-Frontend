@@ -1,16 +1,14 @@
 import { useState } from "react";
-// import useGetDataQuery from "../../hooks/api/useGetDataQuery";
-import { Down_arrow, Up_arrow } from "../SVG-Icons";
-import useGetDataQuery1 from "../../hooks/api/useGetDataQuery1";
+import useGetDataQuery from "../../hooks/api/useGetDataQuery";
 import use from "../../hooks/use";
+import { Down_arrow, Up_arrow } from "../SVG-Icons";
 
 export default function ChooseQuiz({
   allProps: { isFocus, setIsFocus, setSelectedTopic },
 }) {
   const [input, setInput] = useState("");
 
-  // const { isLoading, isError, data: topics } = useGetDataQuery("topics");
-  const topics = use(useGetDataQuery1("topics"));
+  const topics = use(useGetDataQuery("topics"));
 
   const handleTopicClick = (topic) => {
     setSelectedTopic(topic);
@@ -58,16 +56,6 @@ export default function ChooseQuiz({
         <div className="w-full text-base absolute bg-gray-200 rounded drop-shadow-sm">
           <div className="w-2 h-2 absolute bg-gray-200 translate-x-6 -translate-y-2/4 rotate-45 -z-10"></div>
           <div className="px-1 py-1">
-            {/* Loading state... */}
-            {/* {isLoading && !isError && (
-              <p className="px-3 py-1 hover:bg-gray-300 rounded">Loading...</p>
-            )} */}
-
-            {/* Error handling... */}
-            {/* {!isLoading && isError && (
-              <p className="px-3 py-1 bg-red-400 rounded">There was an Error</p>
-            )} */}
-
             {/* No topic handling */}
             {topics.length === 0 && (
               <p className="px-3 py-1 hover:bg-gray-300 rounded">

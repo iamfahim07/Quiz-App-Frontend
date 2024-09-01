@@ -70,22 +70,8 @@ export default function AdminLogin() {
           />
         </div>
 
-        {/* {isError && (
-            <p className="text-red-600 font-semibold">
-              Wrong username or password
-            </p>
-          )} */}
-
         <div className="w-fit relative left-full -translate-x-full">
           <div className="flex gap-2 items-center">
-            {/* <Button
-                isGhostButton={true}
-                handleButtonClick={() => setIsRegister(!isRegister)}
-              >
-                {isRegister ? "LogIn" : "Register"}
-              </Button> */}
-            {/* <span className="text-gray-800 dark:text-[#F6F7F9]">or</span> */}
-
             {isError && (
               <p className="text-red-600 font-semibold">
                 Wrong username or password

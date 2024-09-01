@@ -1,75 +1,39 @@
-import { useReducer, useEffect } from "react";
+import {
+  createCache,
+  isCacheExist,
+  readCache,
+} from "./cached-api-data/cachedAPIData";
 
-// reducer function
-const dataFetchReducer = (state, action) => {
-  switch (action.type) {
-    case "FETCH_INIT":
-      return {
-        ...state,
-        isLoading: true,
-        isError: false,
-        data: [],
-        errorMessage: "",
-      };
-    case "FETCH_SUCCESS":
-      return {
-        ...state,
-        isLoading: false,
-        isError: false,
-        data: action?.payload?.data,
-      };
-    case "FETCH_FAILURE":
-      return {
-        ...state,
-        isLoading: false,
-        isError: true,
-        errorMessage: action?.payload?.message,
-      };
-    default:
-      throw new Error();
+export default function useGetDataQuery(
+  queryString,
+  { redirectFunc = () => {} } = {}
+) {
+  const url = `${import.meta.env.VITE_SERVER_BASE_URL}/${queryString}`;
+
+  if (!isCacheExist(url)) {
+    createCache(url, getData(url, redirectFunc));
   }
-};
 
-export default function useGetDataQuery(queryString) {
-  const [responseData, dispatch] = useReducer(dataFetchReducer, {
-    isLoading: true,
-    isError: false,
-    data: [],
-    errorMessage: "",
+  return readCache(url);
+}
+
+async function getData(url, redirectFunc) {
+  const response = await fetch(url, {
+    method: "GET",
+    credentials: "include",
   });
 
-  useEffect(() => {
-    let didCancel = false;
+  const result = await response.json();
 
-    const fetchData = async () => {
-      dispatch({ type: "FETCH_INIT" });
+  if (!response.ok && response.status === 401) {
+    const newToken = await redirectFunc();
 
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_SERVER_BASE_URL}/${queryString}`
-        );
-        const result = await response.json();
+    return newToken?.userName ? newToken : {};
+  }
 
-        if (!didCancel) {
-          if (result.data) {
-            dispatch({ type: "FETCH_SUCCESS", payload: result });
-          } else {
-            dispatch({ type: "FETCH_FAILURE", payload: result });
-          }
-        }
-      } catch (error) {
-        if (!didCancel) {
-          dispatch({ type: "FETCH_FAILURE" });
-        }
-      }
-    };
+  if (!response.ok && response.status !== 401) {
+    return [];
+  }
 
-    fetchData();
-
-    return () => {
-      didCancel = true;
-    };
-  }, [queryString]);
-
-  return { ...responseData };
+  return result.data;
 }

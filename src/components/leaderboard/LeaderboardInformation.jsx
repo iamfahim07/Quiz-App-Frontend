@@ -13,10 +13,11 @@ export default function LeaderboardInformation() {
         </h1>
 
         <p className="text-base sm:text-lg md:text-lg text-gray-600 dark:text-[#F2F3F5] font-['Inter']">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat.
+          The Quiz App Leaderboard features a straightforward display of the top
+          seven highest scorers. This leaderboard showcases the names and scores
+          of the seven top performers, providing a quick and clear view of the
+          leading players in the quiz app. It’s updated regularly to reflect the
+          most recent top scores.
         </p>
 
         <p className="text-base sm:text-lg md:text-lg bg-sky-400 text-white py-1 px-2 rounded font-['Inter'] custom-animate-pulse">

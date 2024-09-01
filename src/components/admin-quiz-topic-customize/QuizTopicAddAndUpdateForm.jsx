@@ -13,10 +13,6 @@ export default function QuizTopicAddAndUpdateForm({
   setFormState,
   setTopics,
 }) {
-  // const [input, setInput] = useState({
-  //   title: "",
-  //   description: "",
-  // });
   // file referance
   const fileRef = useRef(null);
 
@@ -92,8 +88,6 @@ export default function QuizTopicAddAndUpdateForm({
           Form_Types={Form_Types}
           isDisabled={isLoading}
         />
-
-        {/* <input type="file" name="quiz-image" ref={fileRef} required /> */}
       </div>
 
       <div className="flex justify-end items-center gap-2">

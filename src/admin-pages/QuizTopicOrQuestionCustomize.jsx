@@ -1,7 +1,6 @@
 import { Suspense, useState } from "react";
 import QuizQuestionAllList from "../components/admin-quiz-question-customize/QuizQuestionAllList";
 import QuizTopicAllList from "../components/admin-quiz-topic-customize/QuizTopicAllList";
-// import QuizTopicInformation from "../components/admin-quiz-topic-customize/QuizTopicInformation";
 import QuizTopicOrQuestionInformation from "../components/shared-ui/QuizTopicOrQuestionInformation";
 import { DummyLineSkeleton } from "../skeleton/SkeletonLoaders";
 
@@ -75,15 +74,6 @@ export default function QuizTopicOrQuestionCustomize({ context }) {
 
   return (
     <main className="min-h-[80vh] flex flex-col lg:flex-row lg:justify-between gap-8 bg-gray-100 dark:bg-gray-700 my-4">
-      {/* <QuizTopicInformation
-        allStates={{
-          formState,
-          setFormState,
-          Form_Types,
-          clearInput,
-        }}
-      /> */}
-
       <QuizTopicOrQuestionInformation
         allStates={{
           formState,

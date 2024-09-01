@@ -2,11 +2,10 @@ import { useState } from "react";
 import Lottie from "react-lottie";
 import IntroduceYourselfAnimation from "../assets/Introduce Yourself.json";
 import Button from "../components/Button";
+import InputField from "../components/form-element/InputField";
 import { Spin_Animation } from "../components/SVG-Icons";
 import { useAuthContext } from "../context";
 import { Navigate } from "../router/CustomRouter";
-// import Input from "../components/form-element/Input";
-import InputField from "../components/form-element/InputField";
 
 export default function IntroduceYourself() {
   const [input, setInput] = useState({
@@ -79,11 +78,14 @@ export default function IntroduceYourself() {
           {isRegister ? "Introduce Yourself" : "Welcome Back!"}
         </h1>
 
-        <p className="text-base sm:text-lg md:text-2xl text-gray-600 dark:text-[#F2F3F5] font-['Inter'] mb-5 md:mb-8">
+        <p className="text-base sm:text-lg md:text-2xl text-gray-600 dark:text-[#F2F3F5] font-['Inter']">
           {isRegister
             ? `Enjoy Hassle-Free Access: Simply Enter Your Details to Showcase Your Mastery on the Leaderboard!`
             : `Enjoy Hassle-Free Entry: Simply Enter Your Name & password to
             Showcase Your Mastery on the Leaderboard!`}
+        </p>
+        <p className="w-fit text-white font-semibold px-2 bg-sky-400 rounded mb-5 md:mb-8">
+          Username cannot exceed 12 characters.
         </p>
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -95,24 +97,6 @@ export default function IntroduceYourself() {
 
             <div className="flex flex-col gap-3">
               {isRegister && (
-                // <input
-                //   className="w-full text-lg text-gray-800 dark:text-[#F6F7F9] font-normal bg-transparent dark:caret-white px-2 py-1 border-2 border-gray-300 focus:border-teal-600 transition-colors duration-300 rounded outline-none"
-                //   type="text"
-                //   name="fullName"
-                //   placeholder="Enter Full name"
-                //   value={input.fullName}
-                //   onChange={handleInput}
-                //   required
-                // />
-                // <Input
-                //   type="text"
-                //   name="fullName"
-                //   placeholder="Enter Full name"
-                //   value={input.fullName}
-                //   onHandleInput={handleInput}
-                //   required
-                // />
-
                 <InputField
                   type="text"
                   name="fullName"
@@ -122,24 +106,6 @@ export default function IntroduceYourself() {
                   required
                 />
               )}
-              {/* <input
-                className="w-full text-lg text-gray-800 dark:text-[#F6F7F9] font-normal bg-transparent dark:caret-white px-2 py-1 border-2 border-gray-300 focus:border-teal-600 transition-colors duration-300 rounded outline-none"
-                type="text"
-                name="userName"
-                placeholder="Enter User name"
-                value={input.userName}
-                onChange={handleInput}
-                required
-              /> */}
-
-              {/* <Input
-                type="text"
-                name="userName"
-                placeholder="Enter User name"
-                value={input.userName}
-                onHandleInput={handleInput}
-                required
-              /> */}
 
               <InputField
                 type="text"
@@ -149,25 +115,6 @@ export default function IntroduceYourself() {
                 onHandleInput={handleInput}
                 required
               />
-
-              {/* <input
-                className="w-full text-lg text-gray-800 dark:text-[#F6F7F9] font-normal bg-transparent dark:caret-white px-2 py-1 border-2 border-gray-300 focus:border-teal-600 transition-colors duration-300 rounded outline-none"
-                type="password"
-                name="password"
-                placeholder="Enter password"
-                value={input.password}
-                onChange={handleInput}
-                required
-              /> */}
-
-              {/* <Input
-                type="password"
-                name="password"
-                placeholder="Enter password"
-                value={input.password}
-                onHandleInput={handleInput}
-                required
-              /> */}
 
               <InputField
                 type="password"

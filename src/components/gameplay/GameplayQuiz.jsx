@@ -1,12 +1,14 @@
-import { useAnalysisContext, useQuizTopicContext } from "../../context";
-import Button from "../Button";
-// import useGetDataQuery from "../../hooks/api/useGetDataQuery";
 import { useEffect, useRef, useState } from "react";
-import { useAuthContext } from "../../context";
-import useGetDataQuery1 from "../../hooks/api/useGetDataQuery1";
+import {
+  useAnalysisContext,
+  useAuthContext,
+  useQuizTopicContext,
+} from "../../context";
+import useGetDataQuery from "../../hooks/api/useGetDataQuery";
 import useSetDataMutation from "../../hooks/api/useSetDataMutation";
 import use from "../../hooks/use";
 import { Navigate } from "../../router/CustomRouter";
+import Button from "../Button";
 import QuizBody from "../shared-ui/user/QuizBody";
 import QuizCountNotification from "../shared-ui/user/QuizCountNotification";
 
@@ -14,36 +16,25 @@ export default function GameplayQuiz() {
   const { quizTopic } = useQuizTopicContext();
 
   // current user info
-  const { currentUser } = useAuthContext();
+  const { currentUser, setCurrentUser } = useAuthContext();
 
   //getting all the quizzes
-  //   const {
-  //     isLoading: quiz_loading,
-  //     isError: quiz_error,
-  //     data: quizzes,
-  //     errorMessage: quiz_error_msg,
-  //   } = useGetDataQuery(`quizzes/${quizTopic.toLowerCase()}`);
+  const quizzes = use(useGetDataQuery(`quizzes/${quizTopic?.id}`));
 
-  const quizzes = use(useGetDataQuery1(`quizzes/${quizTopic?.id}`));
-  // trying new leaderboard logic
-  // const leaderboard = use(useGetDataQuery1(`leaderboards/${quizTopic?.id}`));
+  // logout current user if refresh token is invalid
+  if (quizzes === undefined) {
+    setCurrentUser({});
+  }
 
   const [setData] = useSetDataMutation(`leaderboards/${quizTopic?.id}`);
-
-  // getting the leaderboard info
-  // const {
-  //   isLoading: leaderboard_loading,
-  //   data: leaderboard_data,
-  //   errorMessage: leaderboard_errorMessage,
-  // } = useGetDataQuery(`leaderboards/${quizTopic}`);
 
   // analysis context
   const {
     setUserAchievedScore,
-    // setUserTimeTaken,
+
     setQuizData,
     setUserSelectedData,
-    // setLeaderboardInfo,
+
     setRankingText,
   } = useAnalysisContext();
   // time bar state
@@ -60,19 +51,7 @@ export default function GameplayQuiz() {
   // setting quiz and leaderboard info into the analysis context
   useEffect(() => {
     setQuizData(quizzes);
-    // setLeaderboardInfo({
-    //   leaderboard_loading,
-    //   leaderboard_data,
-    //   leaderboard_errorMessage,
-    // });
-  }, [
-    quizzes,
-    setQuizData,
-    // leaderboard_loading,
-    // leaderboard_data,
-    // leaderboard_errorMessage,
-    // setLeaderboardInfo,
-  ]);
+  }, [quizzes, setQuizData]);
 
   // time bar useEffect
   useEffect(() => {
@@ -117,8 +96,6 @@ export default function GameplayQuiz() {
   // next button click event
   const onNextButtonClick = async () => {
     if (currentQuizIndex === 0) {
-      // setUserAchievedScore(0);
-      // setUserTimeTaken(0);
       scoreAndTime.current.userAchievedScore = 0;
       scoreAndTime.current.userTimeTaken = 0;
     }
@@ -132,7 +109,6 @@ export default function GameplayQuiz() {
       { id: qnID, userAnswers: [...selectedAnswers] },
     ]);
 
-    // setUserTimeTaken((prev) => prev + remainingTime.second);
     scoreAndTime.current.userTimeTaken += remainingTime.second;
 
     checkAnswers();
@@ -180,7 +156,6 @@ export default function GameplayQuiz() {
 
     if (isUserCorrect) {
       scoreAndTime.current.userAchievedScore += 5;
-      // setUserAchievedScore((prev) => prev + 5);
     }
   };
 
@@ -197,7 +172,6 @@ export default function GameplayQuiz() {
       creationTime: timestamps,
     };
 
-    // const newTopSevenScorer = await dependenciesRef.current.setData(playerQuizResult);
     const newLeaderboardData = await setData(playerQuizResult);
 
     const currentPlayerPosition = newLeaderboardData.topScorer.findIndex(
@@ -207,9 +181,6 @@ export default function GameplayQuiz() {
     );
 
     if (currentPlayerPosition >= 0) {
-      // const position = newLeaderboardData.topScorer.findIndex(
-      //   (user) => user.creationTime === timestamps
-      // );
       const generateSuffix =
         currentPlayerPosition + 1 === 1
           ? "st"
@@ -226,86 +197,64 @@ export default function GameplayQuiz() {
   }
 
   return (
-    <>
-      {quizzes?.length > 0 && (
-        <div className="w-full lg:w-3/5 flex justify-center items-center py-4 sm:py-8 px-5 sm:px-10">
-          <div className="w-full flex flex-col gap-6 md:gap-8 bg-white dark:bg-gray-600 rounded shadow-xl px-2 md:px-5 py-2 md:py-4">
-            <div className="flex flex-col gap-3 md:gap-4">
-              <h1 className="text-xl sm:text-2xl md:text-3xl text-gray-800 dark:text-[#F6F7F9] font-normal font-['Roboto']">
-                Hurry, time&apos;s running out!{" "}
-                <span>{remainingTime.second}</span>
-              </h1>
-              <div className="w-full h-1 bg-gray-200 rounded">
-                <div
-                  className={`h-1 ${
-                    remainingTime.second < 11
-                      ? "bg-green-600"
-                      : remainingTime.second < 21
-                      ? "bg-yellow-300"
-                      : "bg-red-600"
-                  } ${
-                    remainingTime.isTimeBarActive &&
-                    "rounded transition-all ease-linear duration-1000"
-                  }`}
-                  style={{
-                    width: `${remainingTime.timeBarWidth}%`,
-                  }}
-                ></div>
-              </div>
-            </div>
-
-            {/* handeling the loging state */}
-            {/* {quiz_loading && !quiz_error && <h1>Loading...</h1>} */}
-
-            {/* handling the error state */}
-            {/* {!quiz_loading && quiz_error && quiz_error_msg && (
-          <h1>{quiz_error_msg}</h1>
-        )} */}
-
-            {/* handling success state */}
-
-            <QuizBody
-              quiz={quizzes[currentQuizIndex]}
-              qnNo={currentQuizIndex + 1}
-              userSelectedAnswers={selectedAnswers}
-              onToggleClick={toggleClick}
-              timeLeft={remainingTime.second}
-            />
-
-            <div className="flex justify-between items-center">
-              {/* <p className="text-base sm:text-lg md:text-2xl text-gray-600 dark:text-[#F2F3F5] font-['Inter']">
-        <span className="font-semibold text-gray-600 dark:text-[#F2F3F5]">
-          {currentQuizIndex + 1}
-        </span>{" "}
-        of{" "}
-        <span className="font-semibold text-gray-600 dark:text-[#F2F3F5]">
-          {quizzes.length}
-        </span>{" "}
-        Questions
-      </p> */}
-
-              <QuizCountNotification
-                quizzes={quizzes}
-                currentQuizIndex={currentQuizIndex}
-              />
-
-              {/* <Link
-                to={
-                  currentQuizIndex === quizzes?.length - 1
-                    ? `/answer_analysis/${quizTopic?.title}`
-                    : ""
-                }
-              > */}
-              <Button handleButtonClick={onNextButtonClick}>
-                {currentQuizIndex === quizzes?.length - 1
-                  ? "Finish"
-                  : "Next Question"}
-              </Button>
-              {/* </Link> */}
+    <div
+      className={`w-full lg:w-3/5 flex justify-center ${
+        quizzes?.length > 0 ? "items-center" : "items-start"
+      } py-4 sm:py-8 px-5 sm:px-10`}
+    >
+      {quizzes?.length > 0 ? (
+        <div className="w-full flex flex-col gap-6 md:gap-8 bg-white dark:bg-gray-600 rounded shadow-xl px-2 md:px-5 py-2 md:py-4">
+          <div className="flex flex-col gap-3 md:gap-4">
+            <h1 className="text-xl sm:text-2xl md:text-3xl text-gray-800 dark:text-[#F6F7F9] font-normal font-['Roboto']">
+              Hurry, time&apos;s running out!
+            </h1>
+            <div className="w-full h-1 bg-gray-200 rounded">
+              <div
+                className={`h-1 ${
+                  remainingTime.second < 11
+                    ? "bg-green-600"
+                    : remainingTime.second < 21
+                    ? "bg-yellow-300"
+                    : "bg-red-600"
+                } ${
+                  remainingTime.isTimeBarActive &&
+                  "rounded transition-all ease-linear duration-1000"
+                }`}
+                style={{
+                  width: `${remainingTime.timeBarWidth}%`,
+                }}
+              ></div>
             </div>
           </div>
+
+          {/* handling success state */}
+          <QuizBody
+            quiz={quizzes[currentQuizIndex]}
+            qnNo={currentQuizIndex + 1}
+            userSelectedAnswers={selectedAnswers}
+            onToggleClick={toggleClick}
+            timeLeft={remainingTime.second}
+          />
+
+          <div className="flex justify-between items-center">
+            <QuizCountNotification
+              quizzes={quizzes}
+              currentQuizIndex={currentQuizIndex}
+            />
+
+            <Button handleButtonClick={onNextButtonClick}>
+              {currentQuizIndex === quizzes?.length - 1
+                ? "Finish"
+                : "Next Question"}
+            </Button>
+          </div>
         </div>
+      ) : (
+        <p className="text-base sm:text-lg md:text-lg bg-sky-400 text-white py-1 px-2 rounded font-['Inter'] custom-animate-pulse">
+          There are no questions available for this quiz topic at the moment,
+          but rest assured, new questions will be coming soon!
+        </p>
       )}
-    </>
+    </div>
   );
 }

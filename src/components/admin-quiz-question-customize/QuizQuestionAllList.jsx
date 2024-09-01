@@ -1,10 +1,9 @@
 import { useState } from "react";
-import useGetDataQuery1 from "../../hooks/api/useGetDataQuery1";
+import useGetDataQuery from "../../hooks/api/useGetDataQuery";
 import use from "../../hooks/use";
 import { useParamsContext } from "../../router/custom-router-context";
-import QuizQuestionAddAndUpdateForm from "./QuizQuestionAddAndUpdateForm";
-// import SingleQuizQuestion from "./SingleQuizQuestion";
 import SingleQuizTopicOrQuestion from "../shared-ui/SingleQuizTopicOrQuestion";
+import QuizQuestionAddAndUpdateForm from "./QuizQuestionAddAndUpdateForm";
 
 export default function QuizQuestionAllList({
   allStates: {
@@ -20,9 +19,8 @@ export default function QuizQuestionAllList({
   const { topic_name, topic_id } = useParamsContext();
 
   // all the quiz question
-  const [quizzes, setQuizzes] = useState(
-    use(useGetDataQuery1(`quizzes/${topic_id}`)) || []
-  );
+  const quizzesData = use(useGetDataQuery(`quizzes/${topic_id}`));
+  const [quizzes, setQuizzes] = useState(quizzesData || []);
 
   // quiz question update function
   const handleUpdateClick = (quizInfo) => {
@@ -74,13 +72,6 @@ export default function QuizQuestionAllList({
           ) : (
             quizzes?.map((quiz) => {
               return (
-                // <SingleQuizQuestion
-                //   key={quiz._id}
-                //   quiz={quiz}
-                //   setQuizzes={setQuizzes}
-                //   onUpdateClick={handleUpdateClick}
-                // />
-
                 <SingleQuizTopicOrQuestion
                   key={quiz._id}
                   propsData={quiz}

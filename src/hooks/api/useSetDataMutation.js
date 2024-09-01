@@ -1,5 +1,5 @@
 import { useReducer } from "react";
-import { updateCache, deleteCache } from "./cached-api-data/cachedAPIData";
+import { deleteCache, updateCache } from "./cached-api-data/cachedAPIData";
 
 const dataFetchReducer = (state, action) => {
   switch (action.type) {
@@ -29,7 +29,7 @@ const dataFetchReducer = (state, action) => {
   }
 };
 
-export default function useSetDataMutation(url) {
+export default function useSetDataMutation(url = "") {
   const [responseData, dispatch] = useReducer(dataFetchReducer, {
     isLoading: false,
     isError: false,
@@ -37,49 +37,11 @@ export default function useSetDataMutation(url) {
     errorMessage: "",
   });
 
-  // const initialFetch = useRef(true);
-
-  // useEffect(() => {
-  //   if (!url || !bodyData.length || !initialFetch.current) return;
-
-  //   const fetchData = async () => {
-  //     dispatch({ type: "FETCH_INIT" });
-
-  //     try {
-  //       const response = await fetch(
-  //         `${import.meta.env.VITE_SERVER_BASE_URL}/${url}`,
-  //         {
-  //           method,
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //           body: JSON.stringify({ payloadData: bodyData }),
-  //         }
-  //       );
-  //       const result = await response.json();
-
-  //       if (result.data) {
-  //         dispatch({ type: "FETCH_SUCCESS", payload: result });
-  //       } else {
-  //         dispatch({ type: "FETCH_FAILURE", payload: result });
-  //       }
-  //     } catch (error) {
-  //       dispatch({ type: "FETCH_FAILURE" });
-  //     }
-  //   };
-
-  //   fetchData();
-
-  //   return () => {
-  //     initialFetch.current = false;
-  //   };
-  // }, [url, method, bodyData]);
-
-  async function setData(dataset, { method = "POST" } = {}) {
-    if (!url || !dataset) return;
+  async function setData(dataset, { method = "POST", redirectURL = url } = {}) {
+    if (!redirectURL || !dataset) return;
 
     // constructing the full url
-    const fullURL = `${import.meta.env.VITE_SERVER_BASE_URL}/${url}`;
+    const fullURL = `${import.meta.env.VITE_SERVER_BASE_URL}/${redirectURL}`;
 
     // checking if the data is form data or not
     const isFormData = dataset instanceof FormData;
@@ -97,6 +59,7 @@ export default function useSetDataMutation(url) {
     try {
       const response = await fetch(`${fullURL}`, {
         method,
+        credentials: "include",
         headers: headersConfig,
         body: PayloadData,
       });

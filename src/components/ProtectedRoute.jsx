@@ -11,7 +11,7 @@ export default function ProtectedRoute({ children }) {
   }
 
   // user protected route
-  if (currentUser?.userName) {
+  if (currentUser?.userName && currentUser?.role === "user") {
     if (quizTopic?.title !== undefined) {
       return children;
     } else {

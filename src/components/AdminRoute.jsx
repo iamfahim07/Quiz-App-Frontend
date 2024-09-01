@@ -11,5 +11,5 @@ export default function AdminRoute({ children }) {
   ) {
     return Navigate("/admin/quiz_topic_customize", { replace: true });
   }
-  return <>{children}</>;
+  return children;
 }

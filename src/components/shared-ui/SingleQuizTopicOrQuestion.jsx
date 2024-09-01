@@ -25,8 +25,6 @@ export default function SingleQuizTopicOrQuestion({
         );
       };
 
-      //   const [setData, { isLoading }] = useSetDataMutation("topics");
-
       const handleDelete = async () => {
         const updatedTopics = await setData(propsData._id, {
           method: "DELETE",
@@ -75,9 +73,6 @@ export default function SingleQuizTopicOrQuestion({
           <p className="text-gray-800 dark:text-[#F6F7F9] transition-all">
             {title}
           </p>
-          {/* <span className="text-gray-600 dark:text-[#F2F3F5] text-xs sm:text-sm md:text-base transition-all">
-                How many question this topic has
-              </span> */}
         </div>
 
         {/* icons */}

@@ -1,4 +1,3 @@
-// import { useState } from "react";
 import useSetDataMutation from "../../hooks/api/useSetDataMutation";
 import { useParamsContext } from "../../router/custom-router-context";
 import Button from "../Button";
@@ -14,22 +13,6 @@ export default function QuizQuestionAddAndUpdateForm({
   setFormState,
   setQuizzes,
 }) {
-  // const [input, setInput] = useState({
-  //   question: "",
-
-  //   firstOptionText: "",
-  //   firstOptionCheckbox: false,
-
-  //   secondOptionText: "",
-  //   secondOptionCheckbox: false,
-
-  //   thirdOptionText: "",
-  //   thirdOptionCheckbox: false,
-
-  //   fourthOptionText: "",
-  //   fourthOptionCheckbox: false,
-  // });
-
   // current quiz topic
   const { topic_id } = useParamsContext();
 
