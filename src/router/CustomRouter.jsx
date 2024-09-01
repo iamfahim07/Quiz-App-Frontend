@@ -1,14 +1,23 @@
 import { useEffect, useState } from "react";
+import {
+  createRouteCache,
+  isRouteCacheExist,
+} from "./cached-custom-route/cachedCustomRoute";
 import ParamsProvider from "./custom-router-context/provider/ParamsProvider";
 
 // router function
 export function Route({ path, component }) {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
+  // creating a cache for the specified path
+  createRouteCache(path, path);
+
   const componentParams = path.split(":")[0];
 
   const isDynamicRoute =
-    path.includes(":") && currentPath.includes(componentParams);
+    path.includes(":") &&
+    currentPath.includes(componentParams) &&
+    path.split("/").length === currentPath.split("/").length;
 
   useEffect(() => {
     const onLocationChange = () => {
@@ -24,6 +33,11 @@ export function Route({ path, component }) {
     };
   }, []);
 
+  // handling not found route
+  if (path === "/*" && !isRouteCacheExist(path, currentPath)) {
+    return component;
+  }
+
   return isDynamicRoute ? (
     <ParamsProvider paths={{ path, currentPath }}>{component}</ParamsProvider>
   ) : currentPath === path ? (
@@ -33,6 +47,9 @@ export function Route({ path, component }) {
 
 // link function
 export function Link({ to, children }) {
+  // creating a cache for the specified path
+  createRouteCache(to, to);
+
   const preventReload = (e) => {
     e.preventDefault();
     window.history.pushState({}, "", to);
@@ -47,21 +64,10 @@ export function Link({ to, children }) {
   );
 }
 
-// navigate function
-// export function Navigate(to, { replace } = { replace: false }) {
-//   useEffect(() => {
-//     if (replace) {
-//       window.history.replaceState({}, "", to);
-//     } else {
-//       window.history.pushState({}, "", to);
-//     }
-
-//     const navigationEvent = new PopStateEvent("navigate");
-//     window.dispatchEvent(navigationEvent);
-//   }, [to, replace]);
-// }
-
 export function Navigate(to, { replace } = { replace: false }) {
+  // creating a cache for the specified path
+  createRouteCache(to, to);
+
   if (replace) {
     window.history.replaceState({}, "", to);
   } else {
@@ -72,6 +78,10 @@ export function Navigate(to, { replace } = { replace: false }) {
   window.dispatchEvent(navigationEvent);
 }
 
+// redirect function
 export function Redirect(to) {
+  // creating a cache for the specified path
+  createRouteCache(to, to);
+
   window.location.replace(to);
 }

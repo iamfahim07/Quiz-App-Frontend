@@ -1,3 +1,3 @@
 export default function Footer() {
-  return <hr className="w-full h-[2px] bg-gray-300" />;
+  return <div className="w-full h-[2px] bg-teal-600"></div>;
 }

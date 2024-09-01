@@ -9,10 +9,21 @@ export default function ParamsProvider({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const paramsName = currentPath.split("/");
+    const paramsValue = currentPath
+      .split("/")
+      .filter((item) => !path.split("/").includes(item));
+
+    const paramsObj = path
+      .split("/")
+      .filter((item) => item.includes(":"))
+      .map((item) => item.replace(":", ""))
+      .reduce((obj, str, index) => {
+        return { ...obj, [str]: paramsValue[index] };
+      }, {});
+
     setCustomParams((prev) => ({
       ...prev,
-      [path.split(":")[1]]: paramsName[paramsName.length - 1],
+      ...paramsObj,
     }));
     setLoading(false);
   }, [path, currentPath]);

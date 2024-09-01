@@ -1,15 +1,14 @@
 import { useMemo } from "react";
-import { Cross_Sign, OK_Sign } from "./SVG-Icons";
+import { Cross_Sign, OK_Sign } from "../../SVG-Icons";
 
 export default function QuizBody({
   quiz: { isMultiple, question, options = [] } = {},
   qnNo,
   userSelectedAnswers = [],
   onToggleClick,
+  timeLeft,
   isAnalysis,
 }) {
-  // const { isMultiple, question, options = [] } = quiz;
-
   const shuffleOptions = useMemo(() => {
     return ((array) => {
       for (let i = array.length - 1; i > 0; i--) {
@@ -40,7 +39,13 @@ export default function QuizBody({
               <div
                 key={option._id}
                 className={`flex justify-between items-center px-3 py-2 rounded transition-all ${
-                  isAnalysis ? "pointer-events-none" : "cursor-pointer"
+                  isAnalysis || timeLeft >= 30
+                    ? "cursor-not-allowed"
+                    : "cursor-pointer"
+                } ${
+                  timeLeft >= 30 &&
+                  !userSelectedAnswers?.includes(option._id) &&
+                  "opacity-40"
                 } ${
                   (!isAnalysis && userSelectedAnswers?.includes(option._id)) ||
                   (isAnalysis && option.isCorrect)
@@ -51,6 +56,7 @@ export default function QuizBody({
                     ? "bg-red-300 scale-[1.02] shadow-md"
                     : `bg-gray-200 dark:bg-gray-900 ${
                         !isAnalysis &&
+                        timeLeft < 30 &&
                         "lg:hover:scale-[1.02] lg:hover:shadow-md"
                       }`
                 }`}
