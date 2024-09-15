@@ -4,7 +4,13 @@ import Button from "../Button";
 import { Cross_Sign, OK_Sign } from "../SVG-Icons";
 
 export default function AnalysisInformation({
-  allProps: { userAchievedScore, totalAchievableScore, rankingText },
+  allProps: {
+    userAchievedScore,
+    totalAchievableScore,
+    userTimeTaken,
+    rankingText,
+    isSortQuiz,
+  },
 }) {
   const { topic_analysis, topic_analysis_id } = useParamsContext();
 
@@ -15,8 +21,8 @@ export default function AnalysisInformation({
           Congratulations
         </h1>
 
-        <p className="text-base text-gray-600 dark:text-[#F2F3F5] font-['Inter']">
-          You have completed the quiz successfully
+        <p className="text-base sm:text-lg md:text-lg bg-sky-400 text-white py-1 px-2 rounded font-['Inter'] custom-animate-pulse">
+          You have successfully completed the quiz in {userTimeTaken} seconds.
         </p>
         <p className="text-base sm:text-lg md:text-lg bg-sky-400 text-white py-1 px-2 rounded font-['Inter'] custom-animate-pulse">
           Your score stands at{" "}
@@ -44,20 +50,33 @@ export default function AnalysisInformation({
             The user&apos;s incorrect selection is marked with a red background.
           </p>
         </div>
-        <div className="flex gap-2">
-          <OK_Sign />
-          <p className="text-gray-600 dark:text-[#F2F3F5]">
-            The OK sign indicates the answer chosen by the user
-          </p>
-        </div>
+        {!isSortQuiz && (
+          <div className="flex gap-2">
+            <OK_Sign />
+            <p className="text-gray-600 dark:text-[#F2F3F5]">
+              The OK sign indicates the answer chosen by the user
+            </p>
+          </div>
+        )}
 
-        <div className="flex gap-2">
-          <Cross_Sign />
-          <p className="text-gray-600 dark:text-[#F2F3F5]">
-            The Cross sign indicates the correct answer, but the user did not
-            select it.
-          </p>
-        </div>
+        {!isSortQuiz && (
+          <div className="flex gap-2">
+            <Cross_Sign />
+            <p className="text-gray-600 dark:text-[#F2F3F5]">
+              The Cross sign indicates the correct answer, but the user did not
+              select it.
+            </p>
+          </div>
+        )}
+
+        {isSortQuiz && (
+          <div>
+            <p className="bg-sky-400 text-white py-1 px-2 rounded font-['Inter'] custom-animate-pulse">
+              The correct sorting position number is displayed on the right side
+              of the answer.
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="w-fit relative left-full -translate-x-full flex gap-3">

@@ -17,6 +17,11 @@ export default function GameplayInformation() {
           {quizTopic?.description}
         </p>
 
+        <p className="text-base sm:text-lg md:text-lg bg-sky-400 text-white py-1 px-2 rounded font-['Inter']">
+          For a sort quiz, please drag and drop the answers into the correct
+          order as asked in the question.
+        </p>
+
         <p className="text-base sm:text-lg md:text-lg bg-sky-400 text-white py-1 px-2 rounded font-['Inter'] custom-animate-pulse">
           Please note that if you leave before completing the quiz, your current
           progress will be lost.
@@ -24,7 +29,7 @@ export default function GameplayInformation() {
       </div>
 
       <div className="w-fit relative left-full -translate-x-full flex gap-3">
-        <Link to="/">
+        <Link to="/" replace={true}>
           <Button>Quit</Button>
         </Link>
       </div>

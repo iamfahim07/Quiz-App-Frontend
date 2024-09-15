@@ -27,6 +27,7 @@ const QuizTopicOrQuestionCustomize = lazy(() =>
   import("./admin-pages/QuizTopicOrQuestionCustomize")
 );
 const NotFound = lazy(() => import("./components/NotFound"));
+const ErrorPage = lazy(() => import("./components/ErrorPage"));
 
 // default theme
 const defaultTheme = chooseTheme();
@@ -74,16 +75,16 @@ function App() {
                       </Suspense>
                     }
                   />
-                  <Route
-                    path="/quiz_options"
-                    component={
-                      <Suspense fallback={<CommonSkeletonTwo />}>
-                        <QuizOptions />
-                      </Suspense>
-                    }
-                  />
-
                   <AnalysisProvider>
+                    <Route
+                      path="/quiz_options"
+                      component={
+                        <Suspense fallback={<CommonSkeletonTwo />}>
+                          <QuizOptions />
+                        </Suspense>
+                      }
+                    />
+
                     <Route
                       path="/gameplay"
                       component={
@@ -104,15 +105,16 @@ function App() {
                         </ProtectedRoute>
                       }
                     />
+
+                    <Route
+                      path="/leaderboard/:leaderboard_name/:leaderboard_id"
+                      component={
+                        <Suspense fallback={<CommonSkeletonTwo />}>
+                          <Leaderboard />
+                        </Suspense>
+                      }
+                    />
                   </AnalysisProvider>
-                  <Route
-                    path="/leaderboard/:leaderboard_name/:leaderboard_id"
-                    component={
-                      <Suspense fallback={<CommonSkeletonTwo />}>
-                        <Leaderboard />
-                      </Suspense>
-                    }
-                  />
                 </QuizTopicProvider>
               </AdminRoute>
 
@@ -152,6 +154,17 @@ function App() {
               />
 
               {/* admin route end */}
+
+              {/* error page route start */}
+              <Route
+                path="/error"
+                component={
+                  <Suspense fallback={<HomeSkeleton />}>
+                    <ErrorPage />
+                  </Suspense>
+                }
+              />
+              {/* error page route end */}
 
               {/* not found route start */}
               <Route

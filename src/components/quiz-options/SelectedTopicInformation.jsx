@@ -1,9 +1,27 @@
-import { useQuizTopicContext } from "../../context";
+import { useAnalysisContext, useQuizTopicContext } from "../../context";
 import { Link } from "../../router/CustomRouter";
 import Button from "../Button";
 
 export default function SelectedTopicInformation({ selectedTopic }) {
   const { setQuizTopic } = useQuizTopicContext();
+
+  // analysis context
+  const {
+    setCloneQuizzes,
+    setUserAchievedScore,
+    setUserSelectedData,
+    setUserTimeTaken,
+    setRankingText,
+  } = useAnalysisContext();
+
+  // clear all analysis context provider state before quiz start
+  const clearAllAnalysisProvider = () => {
+    setCloneQuizzes([]);
+    setUserAchievedScore(0);
+    setUserSelectedData([]);
+    setUserTimeTaken(0);
+    setRankingText("");
+  };
 
   return (
     <div className="w-full h-72 flex gap-2 bg-gray-100 dark:bg-gray-900 rounded">
@@ -19,13 +37,15 @@ export default function SelectedTopicInformation({ selectedTopic }) {
         <div className="flex gap-2 items-center">
           <Link to="/gameplay">
             <Button
-              handleButtonClick={() =>
+              handleButtonClick={() => {
                 setQuizTopic({
                   id: selectedTopic._id,
                   title: selectedTopic.title,
                   description: selectedTopic.description,
-                })
-              }
+                });
+
+                clearAllAnalysisProvider();
+              }}
             >
               Start quiz
             </Button>

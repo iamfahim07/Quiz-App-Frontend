@@ -10,8 +10,10 @@ export default function QuizOptions() {
 
   const [selectedTopic, setSelectedTopic] = useState(null);
 
+  // function to set the topic and start a quiz on the selected subject
   const { setQuizTopic } = useQuizTopicContext();
 
+  // clear previous quiz topic
   useEffect(() => {
     setQuizTopic({});
   }, [setQuizTopic]);

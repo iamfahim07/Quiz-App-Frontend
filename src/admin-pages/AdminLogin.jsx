@@ -70,14 +70,12 @@ export default function AdminLogin() {
           />
         </div>
 
+        {isError.status && isError.message.length > 0 && (
+          <p className="text-red-600 font-semibold">{isError.message}</p>
+        )}
+
         <div className="w-fit relative left-full -translate-x-full">
           <div className="flex gap-2 items-center">
-            {isError && (
-              <p className="text-red-600 font-semibold">
-                Wrong username or password
-              </p>
-            )}
-
             <Button type="submit" isDisabled={isLoading}>
               {isLoading ? (
                 <span className="flex justify-center items-center">

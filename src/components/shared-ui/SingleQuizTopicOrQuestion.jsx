@@ -40,10 +40,10 @@ export default function SingleQuizTopicOrQuestion({
       };
     } else if (context === "question") {
       const handleDelete = async () => {
-        const updatedTopics = await setData(propsData._id, {
+        const updatedQuestions = await setData(propsData._id, {
           method: "DELETE",
         });
-        setPropsData(updatedTopics);
+        setPropsData(updatedQuestions);
       };
 
       return {

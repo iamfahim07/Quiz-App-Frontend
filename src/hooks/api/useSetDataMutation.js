@@ -8,6 +8,7 @@ const dataFetchReducer = (state, action) => {
         ...state,
         isLoading: true,
         isError: false,
+        data: null,
         errorMessage: "",
       };
     case "FETCH_SUCCESS":
@@ -16,12 +17,14 @@ const dataFetchReducer = (state, action) => {
         isLoading: false,
         isError: false,
         data: action?.payload?.data,
+        errorMessage: "",
       };
     case "FETCH_FAILURE":
       return {
         ...state,
         isLoading: false,
         isError: true,
+        data: null,
         errorMessage: action?.payload?.message,
       };
     default:
@@ -65,22 +68,29 @@ export default function useSetDataMutation(url = "") {
       });
 
       if (!response.ok) {
-        dispatch({ type: "FETCH_FAILURE", payload: response.statusText });
+        const { message } = await response.json();
+
+        throw new Error(message);
       }
 
       const result = await response.json();
 
-      if (result.data) {
-        dispatch({ type: "FETCH_SUCCESS", payload: result });
+      dispatch({ type: "FETCH_SUCCESS", payload: result });
 
-        return method === "DELETE"
-          ? deleteCache(fullURL, result.data)
-          : updateCache(fullURL, result.data);
-      } else {
-        dispatch({ type: "FETCH_FAILURE", payload: result });
-      }
-    } catch (error) {
-      dispatch({ type: "FETCH_FAILURE" });
+      return method === "DELETE"
+        ? deleteCache(fullURL, result.data)
+        : updateCache(fullURL, result.data);
+    } catch (err) {
+      const errorMsg =
+        err.message === "Failed to fetch"
+          ? "Something went wrong! Please try again in a moment."
+          : err.message;
+
+      dispatch({
+        type: "FETCH_FAILURE",
+        payload: { message: errorMsg },
+      });
+      throw new Error(errorMsg);
     }
   }
 

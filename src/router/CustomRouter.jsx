@@ -46,13 +46,18 @@ export function Route({ path, component }) {
 }
 
 // link function
-export function Link({ to, children }) {
+export function Link({ to, replace, children }) {
   // creating a cache for the specified path
   createRouteCache(to, to);
 
   const preventReload = (e) => {
     e.preventDefault();
-    window.history.pushState({}, "", to);
+
+    if (typeof replace === "boolean" && replace) {
+      window.history.replaceState({}, "", to);
+    } else {
+      window.history.pushState({}, "", to);
+    }
     const navigationEvent = new PopStateEvent("navigate");
     window.dispatchEvent(navigationEvent);
   };
@@ -68,7 +73,7 @@ export function Navigate(to, { replace } = { replace: false }) {
   // creating a cache for the specified path
   createRouteCache(to, to);
 
-  if (replace) {
+  if (typeof replace === "boolean" && replace) {
     window.history.replaceState({}, "", to);
   } else {
     window.history.pushState({}, "", to);

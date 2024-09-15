@@ -8,17 +8,17 @@ import { useAnalysisContext } from "../context";
 
 export default function AnswerAnalysis() {
   const {
+    cloneQuizzes,
     userAchievedScore,
-
-    quizData,
     userSelectedData,
+    userTimeTaken,
     rankingText,
   } = useAnalysisContext();
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
 
   const onButtonClick = (e) => {
     if (e.target.textContent === "Next") {
-      if (currentQuizIndex < quizData.length - 1) {
+      if (currentQuizIndex < cloneQuizzes.length - 1) {
         setCurrentQuizIndex((prev) => prev + 1);
       }
     } else {
@@ -29,7 +29,7 @@ export default function AnswerAnalysis() {
   };
 
   const selectedAnswers = userSelectedData.find(
-    (data) => data.id === quizData[currentQuizIndex]._id
+    (data) => data.id === cloneQuizzes[currentQuizIndex]._id
   );
 
   return (
@@ -37,19 +37,21 @@ export default function AnswerAnalysis() {
       <AnalysisInformation
         allProps={{
           userAchievedScore,
-          totalAchievableScore: quizData?.length,
+          totalAchievableScore: cloneQuizzes?.length,
+          userTimeTaken,
           rankingText,
+          isSortQuiz: cloneQuizzes[currentQuizIndex].isSortQuiz,
         }}
       />
 
-      <div className="w-full lg:w-3/5 flex justify-center items-center py-4 sm:py-8 px-5 sm:px-10">
+      <div className="w-full lg:w-3/5 py-4 sm:py-8 px-5 sm:px-10">
         <div className="w-full">
-          <h1 className="text-xl sm:text-2xl md:text-4xl text-gray-900 dark:text-[#F6F7F9] font-semibold font-['Roboto'] italic mb-5">
+          <h1 className="text-xl sm:text-2xl md:text-3xl text-gray-800 dark:text-[#F6F7F9] font-bold font-['Roboto']">
             Answer Analysis
           </h1>
 
           <QuizBody
-            quiz={quizData[currentQuizIndex]}
+            quiz={cloneQuizzes[currentQuizIndex]}
             qnNo={currentQuizIndex + 1}
             userSelectedAnswers={selectedAnswers.userAnswers}
             isAnalysis={true}
@@ -58,7 +60,7 @@ export default function AnswerAnalysis() {
           <div className="flex justify-between items-center mt-4">
             <QuizCountNotification
               currentQuizIndex={currentQuizIndex}
-              quizzes={quizData}
+              quizzes={cloneQuizzes}
             />
 
             <div className="flex gap-3">
@@ -69,7 +71,7 @@ export default function AnswerAnalysis() {
                 Prev
               </Button>
               <Button
-                isDisabled={currentQuizIndex === quizData.length - 1}
+                isDisabled={currentQuizIndex === cloneQuizzes.length - 1}
                 handleButtonClick={onButtonClick}
               >
                 Next

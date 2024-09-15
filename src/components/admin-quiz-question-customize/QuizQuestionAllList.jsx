@@ -34,6 +34,7 @@ export default function QuizQuestionAllList({
       id: quizInfo._id,
 
       question: quizInfo.question,
+      isSortQuiz: quizInfo.isSortQuiz,
 
       firstOptionText: quizInfo.options[0].value,
       firstOptionCheckbox: quizInfo.options[0].isCorrect,
@@ -52,7 +53,7 @@ export default function QuizQuestionAllList({
   return (
     <div className="w-full lg:w-3/5 flex justify-center items-start py-4 sm:py-8 px-5 sm:px-10">
       <div className="w-full">
-        <h1 className="text-xl sm:text-2xl md:text-4xl text-gray-900 dark:text-[#F6F7F9] font-semibold font-['Roboto'] italic mb-5">
+        <h1 className="text-xl sm:text-2xl md:text-4xl text-gray-900 dark:text-[#F6F7F9] font-semibold font-['Roboto'] mb-5">
           {isActive
             ? `Add new question to ${topic_name} quiz`
             : `${topic_name} Quiz Question List`}
@@ -81,6 +82,12 @@ export default function QuizQuestionAllList({
                 />
               );
             })
+          )}
+
+          {!isActive && quizzes.length === 0 && (
+            <p className="w-fit text-white font-semibold px-2 bg-sky-400 rounded">
+              No question found! Please add some.
+            </p>
           )}
         </div>
       </div>

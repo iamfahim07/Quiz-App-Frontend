@@ -16,7 +16,7 @@ export default function IntroduceYourself() {
   const [isRegister, setIsRegister] = useState(false);
 
   // authentication function
-  const { login, register, isLoading, isError } = useAuthContext();
+  const { login, register, isLoading, isError, setIsError } = useAuthContext();
 
   // handle input function
   const handleInput = (e) => {
@@ -54,6 +54,10 @@ export default function IntroduceYourself() {
       password: "",
     });
     setIsRegister(!isRegister);
+    setIsError({
+      status: false,
+      message: "",
+    });
   };
 
   // animation default options
@@ -90,11 +94,6 @@ export default function IntroduceYourself() {
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div>
-            <p className="text-sm sm:text-base font-medium text-gray-600 dark:text-[#F2F3F5] font-['Inter'] w-fit relative left-full -translate-x-full mb-1">
-              <span className="font-bold">{12 - input.userName.length}</span>{" "}
-              character left
-            </p>
-
             <div className="flex flex-col gap-3">
               {isRegister && (
                 <InputField
@@ -106,6 +105,11 @@ export default function IntroduceYourself() {
                   required
                 />
               )}
+
+              <p className="text-sm sm:text-base font-medium text-gray-600 dark:text-[#F2F3F5] font-['Inter'] w-fit relative left-full -translate-x-full mb-1">
+                <span className="font-bold">{12 - input.userName.length}</span>{" "}
+                character left
+              </p>
 
               <InputField
                 type="text"
@@ -127,15 +131,17 @@ export default function IntroduceYourself() {
             </div>
           </div>
 
-          {isError && (
-            <p className="text-red-600 font-semibold">
-              Wrong username or password
-            </p>
+          {isError.status && isError.message.length > 0 && (
+            <p className="text-red-600 font-semibold">{isError.message}</p>
           )}
 
           <div className="w-fit relative left-full -translate-x-full">
             <div className="flex gap-2 items-center">
-              <Button isGhostButton={true} handleButtonClick={handleRegister}>
+              <Button
+                isGhostButton={true}
+                handleButtonClick={handleRegister}
+                isDisabled={isLoading}
+              >
                 {isRegister ? "LogIn" : "Register"}
               </Button>
               <span className="text-gray-800 dark:text-[#F6F7F9]">or</span>

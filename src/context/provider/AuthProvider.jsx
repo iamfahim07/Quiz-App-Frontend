@@ -25,15 +25,23 @@ const refreshAuthToken = async () => {
 
 export default function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(
-    use(useGetDataQuery("user/check-auth", { redirectFunc: refreshAuthToken }))
+    use(
+      useGetDataQuery("user/check-auth", { redirectFunc: refreshAuthToken })
+    ) || {}
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const [isError, setIsError] = useState({
+    status: false,
+    message: "",
+  });
 
   // register function
   async function register(input) {
     try {
-      setIsError(false);
+      setIsError({
+        status: false,
+        message: "",
+      });
       setIsLoading(true);
       const response = await fetch(
         `${import.meta.env.VITE_SERVER_BASE_URL}/user/register`,
@@ -47,6 +55,16 @@ export default function AuthProvider({ children }) {
         }
       );
 
+      // set error message if response is not ok
+      if (!response.ok) {
+        const { message } = await response.json();
+
+        return setIsError({
+          status: true,
+          message: message,
+        });
+      }
+
       const { data: user } = await response.json();
 
       // set current user
@@ -54,7 +72,11 @@ export default function AuthProvider({ children }) {
 
       return true;
     } catch (err) {
-      setIsError(true);
+      setIsError({
+        status: true,
+        message: "something went wrong! please try again.",
+      });
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -63,7 +85,10 @@ export default function AuthProvider({ children }) {
   // login function
   async function login(input) {
     try {
-      setIsError(false);
+      setIsError({
+        status: false,
+        message: "",
+      });
       setIsLoading(true);
       const response = await fetch(
         `${import.meta.env.VITE_SERVER_BASE_URL}/user/login`,
@@ -77,6 +102,16 @@ export default function AuthProvider({ children }) {
         }
       );
 
+      // set error message if response is not ok
+      if (!response.ok) {
+        const { message } = await response.json();
+
+        return setIsError({
+          status: true,
+          message: message,
+        });
+      }
+
       const { data: user } = await response.json();
 
       // set current user
@@ -84,7 +119,11 @@ export default function AuthProvider({ children }) {
 
       return true;
     } catch (err) {
-      setIsError(true);
+      setIsError({
+        status: true,
+        message: "something went wrong! please try again.",
+      });
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -109,6 +148,7 @@ export default function AuthProvider({ children }) {
         setCurrentUser,
         isLoading,
         isError,
+        setIsError,
         register,
         login,
         logout,

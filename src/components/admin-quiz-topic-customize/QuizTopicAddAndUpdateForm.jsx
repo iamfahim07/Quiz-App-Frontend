@@ -2,6 +2,7 @@ import { useRef } from "react";
 import useSetDataMutation from "../../hooks/api/useSetDataMutation";
 import Button from "../Button";
 import Input from "../form-element/Input";
+import Textarea from "../form-element/Textarea";
 import { Spin_Animation } from "../SVG-Icons";
 
 export default function QuizTopicAddAndUpdateForm({
@@ -16,7 +17,8 @@ export default function QuizTopicAddAndUpdateForm({
   // file referance
   const fileRef = useRef(null);
 
-  const [setData, { isLoading }] = useSetDataMutation("topics");
+  const [setData, { isLoading, isError, errorMessage }] =
+    useSetDataMutation("topics");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,19 +36,23 @@ export default function QuizTopicAddAndUpdateForm({
     formData.append("description", input.description);
     formData.append("quiz-image", fileData);
 
-    const updatedTopics =
-      currentForm === Form_Types.add
-        ? await setData(formData)
-        : await setData(formData, { method: "PUT" });
+    try {
+      const updatedTopics =
+        currentForm === Form_Types.add
+          ? await setData(formData)
+          : await setData(formData, { method: "PUT" });
 
-    if (Array.isArray(updatedTopics)) {
-      setTopics(updatedTopics);
+      if (Array.isArray(updatedTopics)) {
+        setTopics(updatedTopics);
+      }
+
+      fileRef.current.value = null;
+
+      setFormState({ isActive: false, currentForm: "" });
+      clearInput();
+    } catch (err) {
+      console.error("An error occurred while updating topics:", err);
     }
-
-    fileRef.current.value = null;
-
-    setFormState({ isActive: false, currentForm: "" });
-    clearInput();
   };
 
   // handle input function
@@ -59,7 +65,7 @@ export default function QuizTopicAddAndUpdateForm({
 
   return (
     <form
-      className="flex flex-col gap-4 p-10 rounded bg-gray-200 dark:bg-gray-900"
+      className="flex flex-col gap-4 px-5 md:px-10 py-7 md:py-10 rounded bg-gray-200 dark:bg-gray-900"
       onSubmit={handleSubmit}
     >
       <div className="flex flex-col justify-center items-end gap-2">
@@ -71,8 +77,8 @@ export default function QuizTopicAddAndUpdateForm({
           onHandleInput={handleInput}
           isDisabled={isLoading}
         />
-        <Input
-          type="text"
+
+        <Textarea
           name="description"
           placeholder="Enter quiz topic description"
           value={input.description}
@@ -89,6 +95,10 @@ export default function QuizTopicAddAndUpdateForm({
           isDisabled={isLoading}
         />
       </div>
+
+      {isError && errorMessage.length > 0 && (
+        <p className="text-red-600 font-semibold">{errorMessage}</p>
+      )}
 
       <div className="flex justify-end items-center gap-2">
         <Button
