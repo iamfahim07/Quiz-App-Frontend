@@ -18,7 +18,7 @@ export default function ErrorPage() {
     <BaseLayoutBox>
       <div className="flex flex-col gap-6 w-full lg:w-2/5 bg-gray-200 dark:bg-gray-900 py-4 sm:py-8 px-5 sm:px-10">
         <p className="text-base sm:text-lg md:text-lg bg-red-400 text-white py-1 px-2 rounded font-['Inter']">
-          Something went wrong!
+          Something went wrong! Please try again in a moment.
         </p>
 
         <div className="w-fit relative left-full -translate-x-full flex gap-3">
