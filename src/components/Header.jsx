@@ -1,6 +1,6 @@
 import { Home_Icon, LogOut_Icon, User_Icon } from "../components/SVG-Icons";
 import { useAuthContext } from "../context";
-import { Link } from "../router/CustomRouter";
+import { Link, Navigate } from "../router/CustomRouter";
 import Button from "./Button";
 
 export default function Header({
@@ -10,16 +10,26 @@ export default function Header({
 
   // where to navigate
   const link =
-    currentUser.role === "admin" ? "/admin/quiz_topic_customize" : "/";
+    currentUser?.role === "admin" ? "/admin/quiz_topic_customize" : "/";
+
+  // check whether the url should be replaced based on the condition
+  const handleNavigateClick = (to) => {
+    if (window.location.pathname === "/gameplay") {
+      return Navigate(to, { replace: true });
+    } else {
+      return Navigate(to);
+    }
+  };
 
   return (
     <header>
       <div className="flex justify-between items-center">
-        <Link to={link}>
-          <div className="w-8 sm:w-10 h-8 sm:h-10 z-50">
-            <Home_Icon />
-          </div>
-        </Link>
+        <div
+          className="w-8 sm:w-10 h-8 sm:h-10 cursor-pointer z-50"
+          onClick={() => handleNavigateClick(link)}
+        >
+          <Home_Icon />
+        </div>
 
         <div className="flex gap-2 items-center z-50">
           <div

@@ -9,7 +9,7 @@ export default function Guidelines() {
       </div>
 
       <div className="text-base sm:text-lg md:text-2xl text-gray-600 dark:text-[#F2F3F5] font-['Inter'] mb-2 md:mb-8 flex flex-col gap-3 md:gap-5">
-        <ul className="list-disc flex flex-col gap-2">
+        <ul className="list-disc list-inside flex flex-col gap-2">
           <li>
             If you leave before completing the quiz, your current progress will
             be lost.
@@ -22,6 +22,11 @@ export default function Guidelines() {
           <li>You cannot select options once time has expired.</li>
 
           <li>You must remain in the quiz until it is completed.</li>
+
+          <li>
+            You will be notified whether the quiz questions are in true/false
+            format or need to be sorted.
+          </li>
 
           <li>You will earn 5 points for each correct answer.</li>
 

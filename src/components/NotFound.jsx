@@ -13,7 +13,7 @@ export default function NotFound() {
 
   return (
     <main className="w-full flex justify-center items-center pointer-events-none">
-      <div className="w-full  h-full">
+      <div className="w-full h-full">
         <Lottie options={defaultOptions} isStopped={false} isPaused={false} />
       </div>
     </main>

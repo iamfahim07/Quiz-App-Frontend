@@ -1,9 +1,46 @@
+import { useEffect } from "react";
+import { useAnalysisContext, useQuizTopicContext } from "../../context";
+import useGetDataQuery from "../../hooks/api/useGetDataQuery";
+import use from "../../hooks/use";
 import { useParamsContext } from "../../router/custom-router-context";
 import { Link } from "../../router/CustomRouter";
 import Button from "../Button";
 
 export default function LeaderboardInformation() {
-  const { leaderboard_name } = useParamsContext();
+  // leaderboard params names
+  const { leaderboard_name, leaderboard_id } = useParamsContext();
+
+  // getting all the topics
+  const topics = use(useGetDataQuery("topics"));
+
+  // finding the specific topic
+  const topic = topics.find((topic) => topic._id === leaderboard_id);
+
+  // function to set the topic and start a quiz on the selected subject
+  const { setQuizTopic } = useQuizTopicContext();
+
+  // analysis context
+  const {
+    setCloneQuizzes,
+    setUserAchievedScore,
+    setUserSelectedData,
+    setUserTimeTaken,
+    setRankingText,
+  } = useAnalysisContext();
+
+  // clear all analysis context provider state before quiz start
+  const clearAllAnalysisProvider = () => {
+    setCloneQuizzes([]);
+    setUserAchievedScore(0);
+    setUserSelectedData([]);
+    setUserTimeTaken(0);
+    setRankingText("");
+  };
+
+  // clear previous quiz topic
+  useEffect(() => {
+    setQuizTopic({});
+  }, [setQuizTopic]);
 
   return (
     <div className="flex flex-col gap-6 w-full lg:w-2/5 bg-gray-200 dark:bg-gray-900 py-4 sm:py-8 px-5 sm:px-10">
@@ -26,9 +63,25 @@ export default function LeaderboardInformation() {
         </p>
       </div>
 
-      <div className="w-fit relative left-full -translate-x-full">
-        <Link to={"/"}>
-          <Button>Home</Button>
+      <div className="w-fit relative left-full -translate-x-full flex gap-3">
+        <Link to="/">
+          <Button isGhostButton={true}>Home</Button>
+        </Link>
+
+        <Link to="/gameplay">
+          <Button
+            handleButtonClick={() => {
+              setQuizTopic({
+                id: topic._id,
+                title: topic.title,
+                description: topic.description,
+              });
+
+              clearAllAnalysisProvider();
+            }}
+          >
+            Start quiz
+          </Button>
         </Link>
       </div>
     </div>

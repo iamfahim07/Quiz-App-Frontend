@@ -58,7 +58,7 @@ export default function ChooseQuiz({
           <div className="px-1 py-1">
             {/* No topic handling */}
             {topics.length === 0 && (
-              <p className="px-3 py-1 hover:bg-gray-300 rounded">
+              <p className="px-3 py-1 bg-red-300 rounded">
                 No quiz topic found...
               </p>
             )}

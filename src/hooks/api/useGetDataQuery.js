@@ -18,22 +18,27 @@ export default function useGetDataQuery(
 }
 
 async function getData(url, redirectFunc) {
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-  });
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+    });
 
-  const result = await response.json();
+    const result = await response.json();
 
-  if (!response.ok && response.status === 401) {
-    const newToken = await redirectFunc();
+    if (!response.ok && response.status === 401) {
+      const newToken = await redirectFunc();
 
-    return newToken?.userName ? newToken : {};
-  }
+      return newToken?.userName ? newToken : {};
+    }
 
-  if (!response.ok && response.status !== 401) {
+    if (!response.ok && response.status !== 401) {
+      return [];
+    }
+
+    return result.data;
+  } catch (err) {
+    console.log(err.message);
     return [];
   }
-
-  return result.data;
 }

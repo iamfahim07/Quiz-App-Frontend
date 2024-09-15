@@ -1,23 +1,114 @@
-import { useMemo } from "react";
-import { Cross_Sign, OK_Sign } from "../../SVG-Icons";
+import { useEffect, useRef, useState } from "react";
+import { useAnalysisContext } from "../../../context";
+import QuizAnswer from "./QuizAnswer";
 
 export default function QuizBody({
-  quiz: { isMultiple, question, options = [] } = {},
+  quiz: { _id, isMultiple, isSortQuiz, question, options = [] } = {},
   qnNo,
   userSelectedAnswers = [],
   onToggleClick,
   timeLeft,
   isAnalysis,
+  setSelectedAnswers,
+  isLoading,
 }) {
-  const shuffleOptions = useMemo(() => {
-    return ((array) => {
-      for (let i = array.length - 1; i > 0; i--) {
+  // clone quiz data into a context
+  const { setCloneQuizzes } = useAnalysisContext();
+
+  // storing the quiz options after shuffling
+  const [shuffleOptions, setShuffleOptions] = useState([]);
+
+  // shuffle function
+  useEffect(() => {
+    const shuffleAllOptions = (array) => {
+      const cloneOptions = [...array];
+
+      for (let i = cloneOptions.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+        [cloneOptions[i], cloneOptions[j]] = [cloneOptions[j], cloneOptions[i]];
       }
-      return array;
-    })(options);
-  }, [options]);
+
+      setCloneQuizzes((prev) => {
+        // handling the development mode
+        // Check if the quiz already exists
+        const quizExists = prev.some((item) => item._id === _id);
+
+        if (quizExists) {
+          // quiz exists, update it
+          return prev.map((item) =>
+            item._id === _id
+              ? {
+                  _id,
+                  isMultiple,
+                  isSortQuiz,
+                  question,
+                  options: cloneOptions,
+                }
+              : item
+          );
+        } else {
+          // quiz doesn't exist, add it
+          return [
+            ...prev,
+            {
+              _id,
+              isMultiple,
+              isSortQuiz,
+              question,
+              options: cloneOptions,
+            },
+          ];
+        }
+      });
+
+      isSortQuiz ? setSelectedAnswers(cloneOptions) : null;
+      return setShuffleOptions(cloneOptions);
+    };
+
+    if (isAnalysis) {
+      return setShuffleOptions(options);
+    } else {
+      return shuffleAllOptions(options);
+    }
+  }, [
+    options,
+    isSortQuiz,
+    _id,
+    isMultiple,
+    question,
+    setCloneQuizzes,
+    setSelectedAnswers,
+    isAnalysis,
+  ]);
+
+  // drag element reference
+  const dragAnswer = useRef(0);
+  const dragOverAnswer = useRef(0);
+
+  // sort function
+  const handleSort = () => {
+    if (timeLeft >= 30) return;
+
+    const cloneOptions = [...shuffleOptions];
+
+    [cloneOptions[dragAnswer.current], cloneOptions[dragOverAnswer.current]] = [
+      cloneOptions[dragOverAnswer.current],
+      cloneOptions[dragAnswer.current],
+    ];
+
+    setShuffleOptions(cloneOptions);
+    setSelectedAnswers(cloneOptions);
+
+    setCloneQuizzes((prev) => {
+      return prev.map((item) => {
+        if (item._id === _id) {
+          return { ...item, options: cloneOptions };
+        } else {
+          return item;
+        }
+      });
+    });
+  };
 
   return (
     <div className="flex flex-col gap-3 md:gap-4">
@@ -25,62 +116,33 @@ export default function QuizBody({
         <h3 className="text-xl sm:text-2xl md:text-3xl text-gray-700 dark:text-[#F6F7F9] font-semibold font-['Roboto']">
           {qnNo}. {question}
         </h3>
-        {isMultiple && (
+        {(isMultiple || isSortQuiz) && (
           <span className="text-xs text-[#F6F7F9] py-1 px-2 rounded bg-sky-400">
-            This question has multiple answers
+            {isSortQuiz ? "Sort Quiz" : "This question has multiple answers"}
           </span>
         )}
       </div>
 
       <div className="flex flex-col gap-2 md:gap-3 text-base sm:text-lg md:text-2xl text-gray-600 font-['Inter'] font-medium">
         {options.length > 0 &&
-          shuffleOptions.map((option) => {
+          shuffleOptions.map((option, index) => {
             return (
-              <div
+              <QuizAnswer
                 key={option._id}
-                className={`flex justify-between items-center px-3 py-2 rounded transition-all ${
-                  isAnalysis || timeLeft >= 30
-                    ? "cursor-not-allowed"
-                    : "cursor-pointer"
-                } ${
-                  timeLeft >= 30 &&
-                  !userSelectedAnswers?.includes(option._id) &&
-                  "opacity-40"
-                } ${
-                  (!isAnalysis && userSelectedAnswers?.includes(option._id)) ||
-                  (isAnalysis && option.isCorrect)
-                    ? "bg-green-300 scale-[1.02] shadow-md"
-                    : isAnalysis &&
-                      !option.isCorrect &&
-                      userSelectedAnswers?.includes(option._id)
-                    ? "bg-red-300 scale-[1.02] shadow-md"
-                    : `bg-gray-200 dark:bg-gray-900 ${
-                        !isAnalysis &&
-                        timeLeft < 30 &&
-                        "lg:hover:scale-[1.02] lg:hover:shadow-md"
-                      }`
-                }`}
-                onClick={() => onToggleClick?.(option._id)}
-              >
-                <p
-                  className={`text-gray-800 transition-all ${
-                    userSelectedAnswers?.includes(option._id) ||
-                    (isAnalysis && option.isCorrect)
-                      ? "dark:text-gray-800"
-                      : "dark:text-[#F6F7F9]"
-                  }`}
-                >
-                  {option.value}
-                </p>
-
-                {isAnalysis && userSelectedAnswers?.includes(option._id) && (
-                  <OK_Sign />
-                )}
-
-                {isAnalysis &&
-                  !userSelectedAnswers?.includes(option._id) &&
-                  option.isCorrect && <Cross_Sign />}
-              </div>
+                allProps={{
+                  option,
+                  isSortQuiz,
+                  userSelectedAnswers,
+                  isAnalysis,
+                  timeLeft,
+                  onToggleClick,
+                  dragAnswer,
+                  dragOverAnswer,
+                  handleSort,
+                  index,
+                  isLoading,
+                }}
+              />
             );
           })}
       </div>

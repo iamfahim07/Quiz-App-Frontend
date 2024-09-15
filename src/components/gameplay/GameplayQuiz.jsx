@@ -11,6 +11,20 @@ import { Navigate } from "../../router/CustomRouter";
 import Button from "../Button";
 import QuizBody from "../shared-ui/user/QuizBody";
 import QuizCountNotification from "../shared-ui/user/QuizCountNotification";
+import { Spin_Animation } from "../SVG-Icons.jsx";
+
+// shuffle the elements of the quizzes array in a random order
+const shuffleQuizzesArray = (arr) => {
+  // Create a shallow copy to maintain immutability
+  const result = [...arr];
+
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    // Swap elements
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+};
 
 export default function GameplayQuiz() {
   const { quizTopic } = useQuizTopicContext();
@@ -18,25 +32,34 @@ export default function GameplayQuiz() {
   // current user info
   const { currentUser, setCurrentUser } = useAuthContext();
 
-  //getting all the quizzes
-  const quizzes = use(useGetDataQuery(`quizzes/${quizTopic?.id}`));
+  //getting all the quizzes array from the server
+  const quizzesArray = use(useGetDataQuery(`quizzes/${quizTopic?.id}`));
 
-  // logout current user if refresh token is invalid
+  // quizzes state
+  const [quizzes, setQuizzes] = useState([]);
+
+  useEffect(() => {
+    //getting all the quizzes at random order
+    setQuizzes(shuffleQuizzesArray(quizzesArray));
+  }, [quizzesArray]);
+
+  // logout current user if quizzesis is undefined because of invalid refresh token
   if (quizzes === undefined) {
     setCurrentUser({});
   }
 
-  const [setData] = useSetDataMutation(`leaderboards/${quizTopic?.id}`);
+  const [setData, { isLoading }] = useSetDataMutation(
+    `leaderboards/${quizTopic?.id}`
+  );
 
   // analysis context
   const {
     setUserAchievedScore,
-
-    setQuizData,
     setUserSelectedData,
-
+    setUserTimeTaken,
     setRankingText,
   } = useAnalysisContext();
+
   // time bar state
   const [remainingTime, setRemainingTime] = useState({
     second: 0,
@@ -47,11 +70,6 @@ export default function GameplayQuiz() {
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
   // users chossen answers state
   const [selectedAnswers, setSelectedAnswers] = useState([]);
-
-  // setting quiz and leaderboard info into the analysis context
-  useEffect(() => {
-    setQuizData(quizzes);
-  }, [quizzes, setQuizData]);
 
   // time bar useEffect
   useEffect(() => {
@@ -84,8 +102,12 @@ export default function GameplayQuiz() {
       timeoutId = setTimeout(tick, 1000);
     }
 
+    if (isLoading) {
+      clearTimeout(timeoutId);
+    }
+
     return () => clearTimeout(timeoutId);
-  }, [remainingTime, quizzes]);
+  }, [remainingTime, quizzes, isLoading]);
 
   // storing the user score and taken time
   const scoreAndTime = useRef({
@@ -95,6 +117,7 @@ export default function GameplayQuiz() {
 
   // next button click event
   const onNextButtonClick = async () => {
+    // resetting score and time when the quiz start
     if (currentQuizIndex === 0) {
       scoreAndTime.current.userAchievedScore = 0;
       scoreAndTime.current.userTimeTaken = 0;
@@ -102,6 +125,7 @@ export default function GameplayQuiz() {
 
     setRemainingTime({ second: 0, timeBarWidth: 0, isTimeBarActive: false });
 
+    // question id
     const qnID = quizzes[currentQuizIndex]._id;
 
     setUserSelectedData((prev) => [
@@ -111,19 +135,27 @@ export default function GameplayQuiz() {
 
     scoreAndTime.current.userTimeTaken += remainingTime.second;
 
-    checkAnswers();
+    // review the answers to award marks based on their correctness
+    checkAnswers(quizzes[currentQuizIndex]);
 
-    if (currentQuizIndex < quizzes.length - 1) {
+    if (currentQuizIndex < quizzes?.length - 1) {
       setCurrentQuizIndex((prev) => prev + 1);
     }
 
     if (currentQuizIndex === quizzes?.length - 1) {
-      await analyseLeaderboardInfo();
-      setUserAchievedScore(scoreAndTime.current.userAchievedScore);
+      try {
+        await analyseLeaderboardInfo();
+        setUserAchievedScore(scoreAndTime.current.userAchievedScore);
+        setUserTimeTaken(scoreAndTime.current.userTimeTaken);
 
-      Navigate(`/answer_analysis/${quizTopic?.title}/${quizTopic?.id}`, {
-        replace: true,
-      });
+        Navigate(`/answer_analysis/${quizTopic?.title}/${quizTopic?.id}`, {
+          replace: true,
+        });
+      } catch (err) {
+        Navigate("/error", {
+          replace: true,
+        });
+      }
     }
   };
 
@@ -141,21 +173,35 @@ export default function GameplayQuiz() {
   };
 
   // checking if the user answer is correct or not
-  const checkAnswers = () => {
+  const checkAnswers = (quiz) => {
     setSelectedAnswers([]);
 
-    const correctAnswers = quizzes[currentQuizIndex].options.filter(
-      (option) => option.isCorrect
-    );
+    if (!quiz.isSortQuiz) {
+      const correctAnswers = quizzes[currentQuizIndex].options.filter(
+        (option) => option.isCorrect
+      );
 
-    if (correctAnswers.length !== selectedAnswers.length) return;
+      if (correctAnswers.length !== selectedAnswers.length) return;
 
-    const isUserCorrect = correctAnswers.every((correctAnswer) =>
-      selectedAnswers.includes(correctAnswer._id)
-    );
+      const isUserCorrect = correctAnswers.every((correctAnswer) =>
+        selectedAnswers.includes(correctAnswer._id)
+      );
 
-    if (isUserCorrect) {
-      scoreAndTime.current.userAchievedScore += 5;
+      if (isUserCorrect) {
+        scoreAndTime.current.userAchievedScore += 5;
+      }
+    } else if (quiz.isSortQuiz && selectedAnswers.length > 0) {
+      let isCorrectOrder = true;
+
+      selectedAnswers.map((item, index) => {
+        if (item.position !== index + 1) {
+          isCorrectOrder = false;
+        }
+      });
+
+      if (isCorrectOrder) {
+        scoreAndTime.current.userAchievedScore += 5;
+      }
     }
   };
 
@@ -174,7 +220,7 @@ export default function GameplayQuiz() {
 
     const newLeaderboardData = await setData(playerQuizResult);
 
-    const currentPlayerPosition = newLeaderboardData.topScorer.findIndex(
+    const currentPlayerPosition = newLeaderboardData?.topScorer?.findIndex(
       (updatedResult) =>
         updatedResult.userName === playerQuizResult.userName &&
         updatedResult.creationTime === playerQuizResult.creationTime
@@ -229,11 +275,13 @@ export default function GameplayQuiz() {
 
           {/* handling success state */}
           <QuizBody
-            quiz={quizzes[currentQuizIndex]}
+            quiz={quizzes?.[currentQuizIndex]}
             qnNo={currentQuizIndex + 1}
             userSelectedAnswers={selectedAnswers}
             onToggleClick={toggleClick}
             timeLeft={remainingTime.second}
+            setSelectedAnswers={setSelectedAnswers}
+            isLoading={isLoading}
           />
 
           <div className="flex justify-between items-center">
@@ -242,10 +290,19 @@ export default function GameplayQuiz() {
               currentQuizIndex={currentQuizIndex}
             />
 
-            <Button handleButtonClick={onNextButtonClick}>
-              {currentQuizIndex === quizzes?.length - 1
-                ? "Finish"
-                : "Next Question"}
+            <Button
+              handleButtonClick={onNextButtonClick}
+              isDisabled={isLoading}
+            >
+              {isLoading ? (
+                <span className="flex justify-center items-center">
+                  <Spin_Animation /> Processing...
+                </span>
+              ) : currentQuizIndex === quizzes?.length - 1 ? (
+                "Finish"
+              ) : (
+                "Next Question"
+              )}
             </Button>
           </div>
         </div>
