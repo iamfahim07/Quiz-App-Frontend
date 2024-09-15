@@ -74,7 +74,7 @@ export default function AuthProvider({ children }) {
     } catch (err) {
       setIsError({
         status: true,
-        message: "something went wrong! please try again.",
+        message: "Something went wrong! Please try again in a moment.",
       });
       return false;
     } finally {
@@ -121,7 +121,7 @@ export default function AuthProvider({ children }) {
     } catch (err) {
       setIsError({
         status: true,
-        message: "something went wrong! please try again.",
+        message: "Something went wrong! Please try again in a moment.",
       });
       return false;
     } finally {
