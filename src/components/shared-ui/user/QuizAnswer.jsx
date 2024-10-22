@@ -92,7 +92,7 @@ export default function QuizAnswer({
         } text-gray-800 transition-all ${
           userSelectedAnswers?.includes(option?._id) ||
           (isAnalysis && option?.isCorrect) ||
-          isSortQuiz
+          (isAnalysis && isSortQuiz)
             ? "dark:text-gray-800"
             : "dark:text-[#F6F7F9]"
         }`}
