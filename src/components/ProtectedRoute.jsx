@@ -6,12 +6,12 @@ export default function ProtectedRoute({ children }) {
   const { quizTopic } = useQuizTopicContext();
 
   // admin protected route
-  if (currentUser?.userName && currentUser?.role === "admin") {
+  if (currentUser?.username && currentUser?.role === "admin") {
     return children;
   }
 
   // user protected route
-  if (currentUser?.userName && currentUser?.role === "user") {
+  if (currentUser?.username && currentUser?.role === "user") {
     if (quizTopic?.title !== undefined) {
       return children;
     } else {

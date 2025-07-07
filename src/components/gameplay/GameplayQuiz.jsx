@@ -212,7 +212,7 @@ export default function GameplayQuiz() {
     // creating result object with user info and score.
     const playerQuizResult = {
       fullName: currentUser?.fullName,
-      userName: currentUser?.userName,
+      username: currentUser?.username,
       obtainedScore: scoreAndTime.current.userAchievedScore,
       timeSpent: scoreAndTime.current.userTimeTaken,
       creationTime: timestamps,
@@ -222,7 +222,7 @@ export default function GameplayQuiz() {
 
     const currentPlayerPosition = newLeaderboardData?.topScorer?.findIndex(
       (updatedResult) =>
-        updatedResult.userName === playerQuizResult.userName &&
+        updatedResult.username === playerQuizResult.username &&
         updatedResult.creationTime === playerQuizResult.creationTime
     );
 
