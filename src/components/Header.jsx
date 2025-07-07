@@ -125,7 +125,7 @@ export default function Header({
                   <User_Icon />
                 </div>
                 <p className="font-semibold text-lg text-white bg-teal-600 px-2 rounded-sm">
-                  {currentUser?.userName}
+                  {currentUser?.username}
                 </p>
                 <Link to="/">
                   <div className="w-7 h-7" onClick={logout}>

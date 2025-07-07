@@ -7,7 +7,7 @@ import { Navigate } from "../router/CustomRouter";
 
 export default function AdminLogin() {
   const [input, setInput] = useState({
-    userName: "",
+    username: "",
     password: "",
   });
 
@@ -15,7 +15,7 @@ export default function AdminLogin() {
 
   // handle input function
   const handleInput = (e) => {
-    if (e.target.name === "userName") {
+    if (e.target.name === "username") {
       if (e.target.value.length <= 12) {
         setInput({
           ...input,
@@ -35,7 +35,7 @@ export default function AdminLogin() {
     e.preventDefault();
 
     const isSuccess = await login({
-      userName: input.userName,
+      username: input.username,
       password: input.password,
     });
 
@@ -55,9 +55,9 @@ export default function AdminLogin() {
         <div className="w-full flex flex-col gap-3">
           <Input
             type="text"
-            name="userName"
+            name="username"
             placeholder="Enter User name"
-            value={input.userName}
+            value={input.username}
             onHandleInput={handleInput}
           />
 

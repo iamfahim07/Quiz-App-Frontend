@@ -15,7 +15,7 @@ export default function QuizZenDescription() {
       </p>
 
       <Link
-        to={`${currentUser?.userName ? "/guidelines" : "/introduce_yourself"}`}
+        to={`${currentUser?.username ? "/guidelines" : "/introduce_yourself"}`}
       >
         <Button isPrimary={true}>Get Started</Button>
       </Link>

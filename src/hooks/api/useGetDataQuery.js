@@ -29,7 +29,7 @@ async function getData(url, redirectFunc) {
     if (!response.ok && response.status === 401) {
       const newToken = await redirectFunc();
 
-      return newToken?.userName ? newToken : {};
+      return newToken?.username ? newToken : {};
     }
 
     if (!response.ok && response.status !== 401) {

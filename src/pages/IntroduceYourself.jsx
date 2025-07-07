@@ -10,7 +10,7 @@ import { Navigate } from "../router/CustomRouter";
 export default function IntroduceYourself() {
   const [input, setInput] = useState({
     fullName: "",
-    userName: "",
+    username: "",
     password: "",
   });
   const [isRegister, setIsRegister] = useState(false);
@@ -20,7 +20,7 @@ export default function IntroduceYourself() {
 
   // handle input function
   const handleInput = (e) => {
-    if (e.target.name === "userName") {
+    if (e.target.name === "username") {
       if (e.target.value.length <= 12) {
         setInput({
           ...input,
@@ -41,7 +41,7 @@ export default function IntroduceYourself() {
 
     const isSuccess = isRegister
       ? await register(input)
-      : await login({ userName: input.userName, password: input.password });
+      : await login({ username: input.username, password: input.password });
 
     isSuccess ? Navigate("/guidelines", { replace: true }) : "";
   };
@@ -50,7 +50,7 @@ export default function IntroduceYourself() {
   const handleRegister = () => {
     setInput({
       fullName: "",
-      userName: "",
+      username: "",
       password: "",
     });
     setIsRegister(!isRegister);
@@ -89,7 +89,7 @@ export default function IntroduceYourself() {
             Showcase Your Mastery on the Leaderboard!`}
         </p>
         <p className="w-fit text-white font-semibold px-2 bg-sky-400 rounded mb-5 md:mb-8">
-          Username cannot exceed 12 characters.
+          username cannot exceed 12 characters.
         </p>
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -107,15 +107,15 @@ export default function IntroduceYourself() {
               )}
 
               <p className="text-sm sm:text-base font-medium text-gray-600 dark:text-[#F2F3F5] font-['Inter'] w-fit relative left-full -translate-x-full mb-1">
-                <span className="font-bold">{12 - input.userName.length}</span>{" "}
+                <span className="font-bold">{12 - input.username.length}</span>{" "}
                 character left
               </p>
 
               <InputField
                 type="text"
-                name="userName"
+                name="username"
                 label="Enter User name"
-                value={input.userName}
+                value={input.username}
                 onHandleInput={handleInput}
                 required
               />

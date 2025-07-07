@@ -4,7 +4,7 @@ import { Redirect } from "../router/CustomRouter";
 export default function PublicRoute({ children }) {
   const { currentUser } = useAuthContext();
 
-  if (currentUser?.userName) {
+  if (currentUser?.username) {
     return Redirect("/");
   } else {
     return children;
